@@ -5,7 +5,7 @@
 
 // ===== CONFIGURATION =====
 // After deploying the Google Apps Script, paste the Web App URL below:
-const API_URL = '';  // ← PASTE YOUR APPS SCRIPT WEB APP URL HERE
+const API_URL = 'https://script.google.com/macros/s/AKfycbwNTStykNSMyVLwg5xkMhN-xQp0mRQDKwstWqbNBG30fqmUj73LlwxAvS-3kk2rryd96Q/exec';  // ← PASTE YOUR APPS SCRIPT WEB APP URL HERE
 
 // ===== APP STATE =====
 let APP = {
