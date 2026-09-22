@@ -75,8 +75,9 @@ function doGet(e) {
     switch (p.action) {
       case 'next':        return handleNext(p.caller);
       case 'submit':      return handleSubmit(p);
-      case 'submit_next': return handleSubmitAndNext(p);
-      case 'contacts':    return handleContacts();
+      case 'submit_next':   return handleSubmitAndNext(p);
+      case 'whatsapp_sent': return handleWhatsAppSent(p);
+      case 'contacts':      return handleContacts();
       case 'dashboard':   return handleDashboard();
       case 'ping':        return jsonResp({ success: true, message: 'Harvesters Birmingham Awakening API online' });
       default:            return jsonResp({ error: 'Unknown action: ' + (p.action || 'none') });
@@ -131,8 +132,8 @@ function handleNext(caller) {
     const total = Math.max(0, data.length - 1);
     let called  = 0;
 
-    // Pass 1 — check if this caller already has a claimed-but-unsubmitted contact
-    for (let i = 1; i < data.length; i++) {
+    // Pass 1 — check if this caller already has a claimed-but-unsubmitted contact (search from bottom up)
+    for (let i = data.length - 1; i >= 1; i--) {
       const status   = String(data[i][COL_STATUS - 1] || '').trim();
       const calledBy = String(data[i][COL_CALLER - 1] || '').trim();
       if (status) { called++; continue; }
@@ -146,8 +147,8 @@ function handleNext(caller) {
       }
     }
 
-    // Pass 2 — find first completely unclaimed contact
-    for (let i = 1; i < data.length; i++) {
+    // Pass 2 — find first completely unclaimed contact starting from the BOTTOM of the sheet upwards
+    for (let i = data.length - 1; i >= 1; i--) {
       const status   = String(data[i][COL_STATUS - 1] || '').trim();
       const calledBy = String(data[i][COL_CALLER - 1] || '').trim();
       if (!status && !calledBy) {
@@ -204,7 +205,7 @@ function handleSubmit(p) {
 }
 
 // ──────────────────────────────────────────────────────────────────
-// ACTION: SUBMIT_NEXT  –  Record response + claim next (one atomic op)
+// ACTION: SUBMIT_NEXT  –  Record response + claim next (atomic from bottom)
 // ──────────────────────────────────────────────────────────────────
 
 function handleSubmitAndNext(p) {
@@ -221,7 +222,7 @@ function handleSubmitAndNext(p) {
     sheet.getRange(row, COL_NOTES).setValue(p.notes || '');
     sheet.getRange(row, COL_TIME).setValue(p.timestamp || new Date().toISOString());
 
-    // 2. Re-read data and find next contact
+    // 2. Re-read data and find next contact from the BOTTOM of the sheet upwards
     SpreadsheetApp.flush();
     var data  = sheet.getDataRange().getValues();
     var total = Math.max(0, data.length - 1);
@@ -231,7 +232,7 @@ function handleSubmitAndNext(p) {
       if (String(data[i][COL_STATUS - 1] || '').trim()) called++;
     }
 
-    for (var j = 1; j < data.length; j++) {
+    for (var j = data.length - 1; j >= 1; j--) {
       var status   = String(data[j][COL_STATUS - 1] || '').trim();
       var calledBy = String(data[j][COL_CALLER - 1] || '').trim();
       if (!status && !calledBy) {
@@ -253,6 +254,38 @@ function handleSubmitAndNext(p) {
       stats: { total: total, called: called, pending: 0 }
     });
 
+  } catch (err) {
+    return jsonResp({ error: err.toString() });
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+// ──────────────────────────────────────────────────────────────────
+// ACTION: WHATSAPP_SENT  –  Log a WhatsApp broadcast DM
+// ──────────────────────────────────────────────────────────────────
+
+function handleWhatsAppSent(p) {
+  var lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(10000);
+    var sheet = getSheet();
+    var row   = parseInt(p.row, 10);
+    if (!row || row < 2) return jsonResp({ error: 'Invalid row: ' + p.row });
+
+    var currentNotes = String(sheet.getRange(row, COL_NOTES).getValue() || '');
+    var tag = p.note || '[WhatsApp Broadcast Sent]';
+    var newNotes = currentNotes ? (currentNotes + ' | ' + tag) : tag;
+
+    sheet.getRange(row, COL_NOTES).setValue(newNotes);
+
+    var currentCaller = String(sheet.getRange(row, COL_CALLER).getValue() || '').trim();
+    if (!currentCaller) {
+      sheet.getRange(row, COL_CALLER).setValue('WhatsApp Broadcast');
+    }
+
+    SpreadsheetApp.flush();
+    return jsonResp({ success: true, row: row });
   } catch (err) {
     return jsonResp({ error: err.toString() });
   } finally {

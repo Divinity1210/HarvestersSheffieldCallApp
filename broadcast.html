@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#08070d">
+  <title>Awakening WhatsApp Broadcast Console – Harvesters Birmingham</title>
+  <meta name="description" content="Private WhatsApp direct messaging and broadcast dispatch console for Harvesters Birmingham Awakening">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=SF+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ===== CSS RESET & DESIGN TOKENS ===== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0; padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    :root {
+      --bg-primary: #08070d;
+      --bg-surface: #12101c;
+      --bg-surface-elevated: #1a1727;
+      --bg-surface-glass: rgba(18, 16, 28, 0.85);
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-focus: rgba(37, 211, 102, 0.4);
+      --text-primary: #ffffff;
+      --text-secondary: rgba(255, 255, 255, 0.82);
+      --text-muted: rgba(255, 255, 255, 0.48);
+
+      --accent-gold: #ffb800;
+      --accent-gold-glow: rgba(255, 184, 0, 0.3);
+      --accent-green: #25d366;
+      --accent-green-dark: #128c7e;
+      --accent-green-glow: rgba(37, 211, 102, 0.35);
+      --accent-crimson: #ef4444;
+
+      --radius-xs: 8px;
+      --radius-sm: 12px;
+      --radius-md: 18px;
+      --radius-lg: 24px;
+      --radius-full: 9999px;
+
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+      --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    html, body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      min-height: -webkit-fill-available;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Ambient Glow Background */
+    .ambient-glow {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .glow-green {
+      position: absolute;
+      top: -100px; right: -80px;
+      width: 380px; height: 380px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(37, 211, 102, 0.15) 0%, transparent 70%);
+      filter: blur(60px);
+    }
+    .glow-gold {
+      position: absolute;
+      bottom: -60px; left: -80px;
+      width: 360px; height: 360px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 184, 0, 0.12) 0%, transparent 70%);
+      filter: blur(60px);
+    }
+
+    /* ===== SHELL CONTAINER ===== */
+    .app-shell {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 1040px;
+      margin: 0 auto;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 0 16px calc(30px + var(--safe-bottom));
+    }
+
+    /* ===== TOP BAR ===== */
+    .top-bar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(8, 7, 13, 0.88);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border-subtle);
+      margin: 0 -16px 20px;
+      padding: max(12px, var(--safe-top)) 18px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .top-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .brand-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: var(--radius-sm);
+      background: linear-gradient(135deg, #25d366, #128c7e);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      box-shadow: 0 4px 14px var(--accent-green-glow);
+      flex-shrink: 0;
+    }
+    .brand-title h1 {
+      font-size: 1rem;
+      font-weight: 800;
+      line-height: 1.15;
+      background: linear-gradient(135deg, #fff 50%, var(--accent-green) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .brand-title span {
+      font-size: 0.66rem;
+      font-weight: 700;
+      color: var(--accent-gold);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .nav-pill-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      font-size: 0.74rem;
+      font-weight: 700;
+      padding: 7px 12px;
+      border-radius: var(--radius-full);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      transition: var(--transition);
+      font-family: inherit;
+    }
+    .nav-pill-btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+    }
+
+    /* ===== PIN GATE OVERLAY ===== */
+    .pin-gate-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      z-index: 1000;
+      background: rgba(8, 7, 13, 0.96);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .pin-gate-box {
+      width: 100%;
+      max-width: 360px;
+      background: var(--bg-surface);
+      border: 1.5px solid rgba(37, 211, 102, 0.35);
+      border-radius: var(--radius-lg);
+      padding: 28px 22px;
+      text-align: center;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7);
+    }
+    .pin-lock-icon {
+      font-size: 2.4rem;
+      margin-bottom: 12px;
+      display: inline-block;
+    }
+    .pin-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+    .pin-subtitle {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
+    .pin-input {
+      width: 100%;
+      padding: 14px 16px;
+      background: var(--bg-surface-elevated);
+      border: 1.5px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      color: #fff;
+      font-family: inherit;
+      font-size: 1.25rem;
+      font-weight: 800;
+      text-align: center;
+      letter-spacing: 0.2em;
+      outline: none;
+      margin-bottom: 14px;
+    }
+    .pin-input:focus {
+      border-color: var(--accent-green);
+      box-shadow: 0 0 0 3px var(--accent-green-glow);
+    }
+    .pin-btn {
+      width: 100%;
+      min-height: 48px;
+      background: linear-gradient(135deg, #25d366, #128c7e);
+      border: none;
+      border-radius: var(--radius-md);
+      color: #fff;
+      font-family: inherit;
+      font-size: 0.95rem;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 6px 20px var(--accent-green-glow);
+      transition: var(--transition);
+    }
+    .pin-btn:active { transform: scale(0.97); }
+
+    /* ===== STATS KPI STRIP ===== */
+    .kpi-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    @media (max-width: 680px) {
+      .kpi-strip { grid-template-columns: repeat(2, 1fr); }
+    }
+    .kpi-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .kpi-num {
+      font-size: 1.45rem;
+      font-weight: 900;
+      line-height: 1;
+    }
+    .kpi-num.green { color: var(--accent-green); }
+    .kpi-num.gold { color: var(--accent-gold); }
+    .kpi-num.white { color: #fff; }
+    .kpi-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* ===== TWO COLUMN WORKSPACE (Desktop Side-by-side, Mobile Stack) ===== */
+    .workspace-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-bottom: 24px;
+    }
+    @media (max-width: 820px) {
+      .workspace-grid { grid-template-columns: 1fr; }
+    }
+
+    /* Panel Card */
+    .panel-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 18px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+      display: flex;
+      flex-direction: column;
+    }
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+    .panel-title {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .panel-badge {
+      background: rgba(37, 211, 102, 0.14);
+      border: 1px solid rgba(37, 211, 102, 0.3);
+      color: var(--accent-green);
+      font-size: 0.65rem;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: var(--radius-full);
+      text-transform: uppercase;
+    }
+
+    /* Controls & Filter Strip */
+    .control-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+    .control-select {
+      flex: 1;
+      min-width: 140px;
+      padding: 8px 12px;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      color: #fff;
+      font-family: inherit;
+      font-size: 0.78rem;
+      font-weight: 700;
+      outline: none;
+      cursor: pointer;
+    }
+    .control-select:focus { border-color: var(--accent-green); }
+
+    /* Template Composer */
+    .template-textarea {
+      width: 100%;
+      min-height: 180px;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1.5px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      color: #fff;
+      font-family: inherit;
+      font-size: 0.86rem;
+      line-height: 1.6;
+      padding: 12px;
+      resize: vertical;
+      outline: none;
+      margin-bottom: 10px;
+    }
+    .template-textarea:focus {
+      border-color: var(--accent-green);
+      box-shadow: 0 0 0 3px var(--accent-green-glow);
+    }
+    .token-chips {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+    .token-chip {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      color: var(--accent-gold);
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 4px 9px;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      font-family: 'SF Mono', monospace;
+      transition: var(--transition);
+    }
+    .token-chip:hover {
+      background: rgba(255, 184, 0, 0.15);
+      border-color: var(--accent-gold);
+    }
+
+    /* WhatsApp Phone Mockup Preview */
+    .wa-preview-box {
+      background: #0b141a; /* Authentic WhatsApp Dark Chat BG */
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      margin-top: 10px;
+      position: relative;
+    }
+    .wa-preview-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 0.74rem;
+      color: var(--text-muted);
+    }
+    .wa-chat-bubble {
+      background: #005c4b; /* Authentic WhatsApp Outgoing Bubble */
+      border-radius: 10px 10px 2px 10px;
+      padding: 10px 12px;
+      color: #e9edef;
+      font-size: 0.82rem;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      word-break: break-word;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Smart Queue Dispatch Runner */
+    .queue-hero-card {
+      background: var(--bg-surface-elevated);
+      border: 1.5px solid var(--border-focus);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      margin-bottom: 14px;
+      position: relative;
+    }
+    .queue-target-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .queue-avatar {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #25d366, #ffb800);
+      color: #000;
+      font-size: 1rem;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .queue-identity { flex: 1; min-width: 0; }
+    .queue-index-pill {
+      font-size: 0.65rem;
+      font-weight: 800;
+      color: var(--accent-gold);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 2px;
+    }
+    .queue-name {
+      font-size: 1.15rem;
+      font-weight: 900;
+      color: #fff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .queue-phone {
+      font-family: 'SF Mono', monospace;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    /* Hero WhatsApp Dispatch Button */
+    .btn-hero-wa {
+      width: 100%;
+      min-height: 52px;
+      background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
+      border: none;
+      border-radius: var(--radius-md);
+      color: #ffffff;
+      font-family: inherit;
+      font-size: 1.05rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      cursor: pointer;
+      box-shadow: 0 6px 22px var(--accent-green-glow);
+      transition: var(--transition);
+      margin-bottom: 10px;
+    }
+    .btn-hero-wa:hover { filter: brightness(1.08); }
+    .btn-hero-wa:active { transform: scale(0.97); }
+
+    .queue-actions-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .btn-sub-action {
+      min-height: 42px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .btn-sub-action:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+
+    /* Auto Advance Checkbox */
+    .auto-advance-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 10px;
+      font-size: 0.74rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      user-select: none;
+    }
+    .auto-advance-wrap input {
+      accent-color: var(--accent-green);
+      cursor: pointer;
+    }
+
+    /* ===== BROADCAST HELPER TOOLS STRIP ===== */
+    .tools-strip {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 16px 18px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .tools-info h3 {
+      font-size: 0.88rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 3px;
+    }
+    .tools-info p {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    .tools-btn-group {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .tool-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      font-family: inherit;
+      font-size: 0.76rem;
+      font-weight: 700;
+      padding: 8px 14px;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: var(--transition);
+    }
+    .tool-btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    /* ===== CONTACTS LIST TABLE PANEL ===== */
+    .contacts-table-panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 18px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+    }
+    .table-search-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .table-search-input {
+      flex: 1;
+      padding: 11px 14px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      color: #fff;
+      font-family: inherit;
+      font-size: 0.85rem;
+      outline: none;
+    }
+    .table-search-input:focus { border-color: var(--accent-green); }
+
+    .contacts-list-container {
+      max-height: 480px;
+      overflow-y: auto;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: var(--radius-sm);
+    }
+    .contact-row-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 11px 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      gap: 12px;
+      transition: var(--transition);
+    }
+    .contact-row-item:hover { background: rgba(255, 255, 255, 0.03); }
+    .contact-row-item.current-queue {
+      background: rgba(37, 211, 102, 0.08);
+      border-left: 3px solid var(--accent-green);
+    }
+    .row-meta { flex: 1; min-width: 0; }
+    .row-name {
+      font-size: 0.86rem;
+      font-weight: 800;
+      color: #fff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .row-phone {
+      font-family: 'SF Mono', monospace;
+      font-size: 0.74rem;
+      color: var(--text-muted);
+    }
+    .row-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .row-badge {
+      font-size: 0.64rem;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: var(--radius-full);
+      text-transform: uppercase;
+    }
+    .row-badge.sent {
+      background: rgba(37, 211, 102, 0.15);
+      color: var(--accent-green);
+    }
+    .row-badge.pending {
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text-muted);
+    }
+    .btn-row-wa {
+      background: rgba(37, 211, 102, 0.15);
+      border: 1px solid rgba(37, 211, 102, 0.35);
+      color: var(--accent-green);
+      font-size: 0.74rem;
+      font-weight: 800;
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .btn-row-wa:hover {
+      background: var(--accent-green);
+      color: #000;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      top: calc(16px + var(--safe-top));
+      left: 50%;
+      transform: translateX(-50%) translateY(-100px);
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--accent-green);
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: var(--radius-full);
+      font-size: 0.82rem;
+      font-weight: 800;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+      z-index: 2000;
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      white-space: nowrap;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+
+    /* Loading */
+    .loading-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(8, 7, 13, 0.8);
+      backdrop-filter: blur(6px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+    .loading-overlay.active { opacity: 1; pointer-events: all; }
+    .spinner {
+      width: 42px; height: 42px;
+      border: 3.5px solid rgba(255, 255, 255, 0.1);
+      border-top-color: var(--accent-green);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 12px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+<div class="ambient-glow">
+  <div class="glow-green"></div>
+  <div class="glow-gold"></div>
+</div>
+
+<!-- PIN SECURITY GATE -->
+<div class="pin-gate-overlay" id="pinGate">
+  <div class="pin-gate-box">
+    <div class="pin-lock-icon">🔒</div>
+    <h2 class="pin-title">Admin Broadcast Console</h2>
+    <p class="pin-subtitle">Enter your secret admin passcode to access WhatsApp bulk messaging.</p>
+    <input type="password" id="pinInput" class="pin-input" placeholder="••••" maxlength="8" autofocus autocomplete="off">
+    <button class="pin-btn" id="pinSubmitBtn">Unlock Console</button>
+  </div>
+</div>
+
+<div class="app-shell" id="mainApp" style="display:none">
+  <!-- TOP APP BAR -->
+  <header class="top-bar">
+    <div class="top-brand">
+      <div class="brand-icon">💬</div>
+      <div class="brand-title">
+        <h1>WhatsApp Broadcast</h1>
+        <span>Awakening 2026 Admin</span>
+      </div>
+    </div>
+    <div class="top-actions">
+      <a href="/" class="nav-pill-btn">📞 Volunteer App</a>
+      <button class="nav-pill-btn" id="lockBtn">🔒 Lock</button>
+    </div>
+  </header>
+
+  <!-- KPI METRICS STRIP -->
+  <div class="kpi-strip">
+    <div class="kpi-card">
+      <div class="kpi-num white" id="kpiTotal">0</div>
+      <div class="kpi-label">WhatsApp Contacts</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-num green" id="kpiSent">0</div>
+      <div class="kpi-label">Messages Sent</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-num gold" id="kpiPending">0</div>
+      <div class="kpi-label">Queue Remaining</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-num green" id="kpiSuccessRate">0%</div>
+      <div class="kpi-label">Progress</div>
+    </div>
+  </div>
+
+  <!-- WORKSPACE: COMPOSER + QUEUE RUNNER -->
+  <div class="workspace-grid">
+    <!-- PANEL 1: TEMPLATE COMPOSER -->
+    <div class="panel-card">
+      <div class="panel-header">
+        <div class="panel-title">
+          <span>✍️ Invite Template</span>
+          <span class="panel-badge">Personalized</span>
+        </div>
+        <button class="nav-pill-btn" id="resetTemplateBtn" style="font-size:0.68rem;padding:4px 9px;">Reset</button>
+      </div>
+
+      <div class="control-row">
+        <select id="audienceSelect" class="control-select">
+          <option value="uncalled">🎯 Priority: Uncalled (Bottom of Sheet)</option>
+          <option value="all">👥 All WhatsApp Contacts (1,816)</option>
+          <option value="unsure">⏳ Unsure Members Only</option>
+          <option value="will-attend">✅ Attending Members (Reminders)</option>
+        </select>
+        <select id="sortOrderSelect" class="control-select">
+          <option value="bottom-up">⬇️ From Bottom of Sheet (Newest)</option>
+          <option value="top-down">⬆️ From Top of Sheet</option>
+        </select>
+      </div>
+
+      <div class="token-chips">
+        <span style="font-size:0.68rem;color:var(--text-muted);align-self:center;">Insert:</span>
+        <button class="token-chip" onclick="insertToken('{{FirstName}}')">+ {{FirstName}}</button>
+        <button class="token-chip" onclick="insertToken('{{FullName}}')">+ {{FullName}}</button>
+        <button class="token-chip" onclick="insertToken('📍 Park Regis, 160 Broad St, Birmingham B15 1DT')">+ Venue</button>
+        <button class="token-chip" onclick="insertToken('🗓️ Sat 26th & Sun 27th Sept')">+ Dates</button>
+      </div>
+
+      <textarea id="messageTemplate" class="template-textarea" placeholder="Type WhatsApp template..."></textarea>
+
+      <!-- LIVE WHATSAPP PREVIEW -->
+      <div class="wa-preview-box">
+        <div class="wa-preview-header">
+          <span>WhatsApp Preview: <strong id="previewRecipientName" style="color:var(--accent-green)">Sample Contact</strong></span>
+        </div>
+        <div class="wa-chat-bubble" id="livePreviewBubble"></div>
+      </div>
+    </div>
+
+    <!-- PANEL 2: SMART QUEUE DISPATCH RUNNER -->
+    <div class="panel-card">
+      <div class="panel-header">
+        <div class="panel-title">
+          <span>🚀 Smart Queue Runner</span>
+          <span class="panel-badge" id="queuePositionBadge">Contact 1 of 0</span>
+        </div>
+        <button class="nav-pill-btn" id="restartQueueBtn" style="font-size:0.68rem;padding:4px 9px;">Restart</button>
+      </div>
+
+      <!-- Current Contact Card in Queue -->
+      <div class="queue-hero-card" id="queueCard">
+        <div class="queue-target-header">
+          <div class="queue-avatar" id="queueAvatar">HB</div>
+          <div class="queue-identity">
+            <div class="queue-index-pill" id="queueIndexPill">Target #1</div>
+            <div class="queue-name" id="queueName">Loading Contact...</div>
+            <div class="queue-phone" id="queuePhone">+44 •••• ••••••</div>
+          </div>
+        </div>
+
+        <button class="btn-hero-wa" id="dispatchBtn">
+          💬 Open WhatsApp &amp; Advance →
+        </button>
+
+        <div class="queue-actions-row">
+          <button class="btn-sub-action" id="prevBtn">⏮️ Previous</button>
+          <button class="btn-sub-action" id="skipBtn">Skip ⏭️</button>
+        </div>
+
+        <label class="auto-advance-wrap">
+          <input type="checkbox" id="autoAdvanceToggle">
+          <span>Keyboard shortcut: Press <strong>Spacebar</strong> or <strong>Enter</strong> to dispatch &amp; advance</span>
+        </label>
+      </div>
+
+      <!-- Queue Status Details -->
+      <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border-subtle);border-radius:var(--radius-sm);padding:12px;font-size:0.76rem;color:var(--text-secondary);line-height:1.6;">
+        <strong style="color:var(--accent-gold);display:block;margin-bottom:4px;">💡 Anti-Ban Safe Dispatch:</strong>
+        Clicking <strong>Open WhatsApp &amp; Advance</strong> opens WhatsApp Desktop or WhatsApp Web with the personalized invitation ready. Simply hit Enter in WhatsApp to send!
+      </div>
+    </div>
+  </div>
+
+  <!-- BROADCAST HELPER TOOLS STRIP -->
+  <div class="tools-strip">
+    <div class="tools-info">
+      <h3>📥 WhatsApp Native Broadcast List Helper</h3>
+      <p>Download contacts as a phone address book file (.vcf) to create native WhatsApp Broadcast lists (up to 256 contacts each).</p>
+    </div>
+    <div class="tools-btn-group">
+      <button class="tool-btn" id="downloadVcfBtn">📇 Export Phone Contacts (.vcf)</button>
+      <button class="tool-btn" id="copyNumbersBtn">📋 Copy Numbers</button>
+    </div>
+  </div>
+
+  <!-- CONTACTS TABLE PANEL -->
+  <div class="contacts-table-panel">
+    <div class="panel-header">
+      <div class="panel-title">
+        <span>📋 Contacts Directory (<span id="filteredCount">0</span>)</span>
+      </div>
+    </div>
+
+    <div class="table-search-row">
+      <input type="text" id="contactSearchInput" class="table-search-input" placeholder="Search by name, phone digits, or status...">
+    </div>
+
+    <div class="contacts-list-container" id="contactsListContainer">
+      <!-- Populated by JS -->
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- LOADING OVERLAY -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div style="text-align:center">
+    <div class="spinner"></div>
+    <p id="loadingText" style="font-size:0.85rem;color:#fff;font-weight:700;">Loading contacts...</p>
+  </div>
+</div>
+
+<script src="broadcast.js"></script>
+</body>
+</html>

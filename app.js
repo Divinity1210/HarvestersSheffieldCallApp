@@ -1259,12 +1259,13 @@ function enableDemoMode() {
   APP.totalContacts = 1816;
   APP.calledCount = 142;
 
+  // Demo contacts starting from bottom of sheet (1816 upwards)
   APP.contacts = [
-    { id: 2, row: 2, contactId: 'HB - 001', name: 'Praise Adeyemi', firstName: 'Praise', phone: '447459250775', status: null, calledBy: null },
-    { id: 3, row: 3, contactId: 'HB - 002', name: 'Oluwaseun Abayomi', firstName: 'Oluwaseun', phone: '447366451528', status: null, calledBy: null },
-    { id: 4, row: 4, contactId: 'HB - 003', name: 'Rianat Abbas', firstName: 'Rianat', phone: '447803507267', status: 'will-attend', calledBy: 'Volunteer Demo' },
-    { id: 5, row: 5, contactId: 'HB - 004', name: 'Obomate Abbey', firstName: 'Obomate', phone: '447407649117', status: 'unsure', calledBy: 'Sister Mary' },
-    { id: 6, row: 6, contactId: 'HB - 005', name: 'Yusra Abdulazeez', firstName: 'Yusra', phone: '447437353244', status: 'will-attend', calledBy: 'Brother John' }
+    { id: 1817, row: 1817, contactId: 'HB - 1816', name: 'Zainab Zubairu', firstName: 'Zainab', phone: '447512984120', status: null, calledBy: null },
+    { id: 1816, row: 1816, contactId: 'HB - 1815', name: 'Victor Williams', firstName: 'Victor', phone: '447814529331', status: null, calledBy: null },
+    { id: 1815, row: 1815, contactId: 'HB - 1814', name: 'Tolulope Vincent', firstName: 'Tolulope', phone: '447910248192', status: null, calledBy: null },
+    { id: 1814, row: 1814, contactId: 'HB - 1813', name: 'Simisola Udoh', firstName: 'Simisola', phone: '447401928374', status: 'will-attend', calledBy: 'Volunteer Demo' },
+    { id: 1813, row: 1813, contactId: 'HB - 1812', name: 'Samuel Thompson', firstName: 'Samuel', phone: '447384910293', status: 'unsure', calledBy: 'Sister Mary' }
   ];
 
   APP.currentContact = APP.contacts[0];
