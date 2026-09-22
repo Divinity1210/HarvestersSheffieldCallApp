@@ -2,1593 +2,1744 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Harvesters Sheffield – Call Campaign</title>
-  <meta name="description" content="Harvesters Sheffield volunteer call campaign management app for Mega Service outreach">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#090910">
+  <meta name="format-detection" content="telephone=no">
+  <title>Harvesters Birmingham – Awakening Call Campaign</title>
+  <meta name="description" content="Harvesters Birmingham mobile volunteer outreach app for Awakening: Breakthrough & Spiritual Renewal">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
-    /* ===== CSS RESET & VARIABLES ===== */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --bg-primary: #0d0a1a;
-      --bg-secondary: #1a1230;
-      --bg-card: rgba(255, 255, 255, 0.04);
-      --bg-card-hover: rgba(255, 255, 255, 0.08);
-      --glass: rgba(255, 255, 255, 0.06);
-      --glass-border: rgba(255, 255, 255, 0.1);
-      --text-primary: #ffffff;
-      --text-secondary: rgba(255, 255, 255, 0.7);
-      --text-muted: rgba(255, 255, 255, 0.4);
-      --accent-gold: #d4a843;
-      --accent-gold-glow: rgba(212, 168, 67, 0.3);
-      --accent-purple: #6d28d9;
-      --accent-purple-glow: rgba(109, 40, 217, 0.3);
-      --accent-deep-purple: #4c1d95;
-      --success: #10b981;
-      --success-bg: rgba(16, 185, 129, 0.15);
-      --danger: #ef4444;
-      --danger-bg: rgba(239, 68, 68, 0.15);
-      --warning: #f59e0b;
-      --warning-bg: rgba(245, 158, 11, 0.15);
-      --info: #6366f1;
-      --info-bg: rgba(99, 102, 241, 0.15);
-      --radius: 16px;
-      --radius-sm: 10px;
-      --radius-xs: 6px;
-      --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    /* ===== CSS RESET & MOBILE-FIRST DESIGN TOKENS ===== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
     }
 
-    html { font-size: 16px; }
-    body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    :root {
+      --bg-primary: #08070d;
+      --bg-surface: #12101b;
+      --bg-surface-elevated: #1a1727;
+      --bg-surface-glass: rgba(26, 23, 39, 0.75);
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-focus: rgba(255, 184, 0, 0.4);
+      --text-primary: #ffffff;
+      --text-secondary: rgba(255, 255, 255, 0.8);
+      --text-muted: rgba(255, 255, 255, 0.48);
+
+      /* Awakening Branding Tokens */
+      --accent-gold: #ffb800;
+      --accent-gold-glow: rgba(255, 184, 0, 0.35);
+      --accent-amber: #ff8a00;
+      --accent-crimson: #ef4444;
+      --accent-crimson-glow: rgba(239, 68, 68, 0.3);
+      --accent-cyan: #06d6a0;
+
+      /* Status Colors */
+      --status-attend: #10b981;
+      --status-attend-bg: rgba(16, 185, 129, 0.16);
+      --status-unsure: #f59e0b;
+      --status-unsure-bg: rgba(245, 158, 11, 0.16);
+      --status-no: #ef4444;
+      --status-no-bg: rgba(239, 68, 68, 0.16);
+      --status-na: #6366f1;
+      --status-na-bg: rgba(99, 102, 241, 0.16);
+
+      --radius-xs: 8px;
+      --radius-sm: 12px;
+      --radius-md: 18px;
+      --radius-lg: 24px;
+      --radius-full: 9999px;
+
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+      --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    html, body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
       background: var(--bg-primary);
       color: var(--text-primary);
       min-height: 100vh;
+      min-height: -webkit-fill-available;
       overflow-x: hidden;
+      touch-action: manipulation;
       -webkit-font-smoothing: antialiased;
     }
 
-    /* ===== AMBIENT BACKGROUND ===== */
-    .ambient-bg {
+    /* Ambient Glow (Restrained & Mobile-Performant) */
+    .ambient-glow {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
       z-index: 0;
-      overflow: hidden;
       pointer-events: none;
+      overflow: hidden;
     }
-    .ambient-bg .orb {
+    .ambient-glow .glow-1 {
       position: absolute;
+      top: -80px; right: -80px;
+      width: 320px; height: 320px;
       border-radius: 50%;
-      filter: blur(80px);
-      animation: float 20s ease-in-out infinite;
+      background: radial-gradient(circle, rgba(239, 68, 68, 0.16) 0%, transparent 70%);
+      filter: blur(60px);
     }
-    .ambient-bg .orb:nth-child(1) {
-      width: 400px; height: 400px;
-      background: rgba(109, 40, 217, 0.18);
-      top: -100px; right: -100px;
-      animation-delay: 0s;
-    }
-    .ambient-bg .orb:nth-child(2) {
-      width: 350px; height: 350px;
-      background: rgba(212, 168, 67, 0.12);
-      bottom: -50px; left: -80px;
-      animation-delay: -7s;
-    }
-    .ambient-bg .orb:nth-child(3) {
-      width: 250px; height: 250px;
-      background: rgba(76, 29, 149, 0.12);
-      top: 40%; left: 50%;
-      animation-delay: -14s;
-    }
-    @keyframes float {
-      0%, 100% { transform: translate(0, 0) scale(1); }
-      25% { transform: translate(30px, -30px) scale(1.05); }
-      50% { transform: translate(-20px, 20px) scale(0.95); }
-      75% { transform: translate(10px, -10px) scale(1.02); }
+    .ambient-glow .glow-2 {
+      position: absolute;
+      bottom: 60px; left: -80px;
+      width: 300px; height: 300px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 184, 0, 0.13) 0%, transparent 70%);
+      filter: blur(60px);
     }
 
-    /* ===== APP CONTAINER ===== */
-    .app {
+    /* ===== MOBILE SHELL CONTAINER ===== */
+    .app-shell {
       position: relative;
       z-index: 1;
-      max-width: 480px;
+      width: 100%;
+      max-width: 540px; /* Tablet & desktop friendly centering */
       margin: 0 auto;
       min-height: 100vh;
-      padding: 0 16px;
+      display: flex;
+      flex-direction: column;
+      padding-bottom: calc(76px + var(--safe-bottom));
     }
 
-    /* ===== HEADER ===== */
-    .header {
-      padding: 20px 0 12px;
-      text-align: center;
+    /* ===== MOBILE TOP APP BAR ===== */
+    .top-bar {
       position: sticky;
       top: 0;
       z-index: 100;
-      background: linear-gradient(to bottom, var(--bg-primary) 60%, transparent);
+      background: rgba(8, 7, 13, 0.85);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
-    }
-    .header-logo {
+      border-bottom: 1px solid var(--border-subtle);
+      padding: max(10px, var(--safe-top)) 16px 10px;
       display: flex;
       align-items: center;
-      justify-content: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .top-bar-brand {
+      display: flex;
+      align-items: center;
       gap: 10px;
-      margin-bottom: 8px;
+      cursor: pointer;
     }
-    .header-logo .icon {
-      width: 40px; height: 40px;
-      border-radius: 10px;
+    .brand-thumb {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-xs);
       overflow: hidden;
+      border: 1.5px solid rgba(255, 184, 0, 0.4);
+      box-shadow: 0 2px 10px var(--accent-gold-glow);
       flex-shrink: 0;
-      box-shadow: 0 4px 15px var(--accent-purple-glow);
     }
-    .header-logo .icon img {
+    .brand-thumb img {
       width: 100%; height: 100%;
       object-fit: cover;
+      display: block;
     }
-    .header h1 {
-      font-size: 1.1rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      background: linear-gradient(135deg, #fff, var(--accent-gold));
+    .brand-text h1 {
+      font-size: 0.95rem;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      line-height: 1.15;
+      background: linear-gradient(135deg, #fff 50%, var(--accent-gold) 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
-    .header-subtitle {
-      font-size: 0.72rem;
-      color: var(--text-muted);
-      letter-spacing: 0.08em;
+    .brand-text span {
+      font-size: 0.65rem;
+      font-weight: 700;
       text-transform: uppercase;
-      font-weight: 500;
+      letter-spacing: 0.08em;
+      color: var(--accent-amber);
+      display: block;
     }
-
-    /* ===== NAV TABS ===== */
-    .nav-tabs {
+    .top-bar-actions {
       display: flex;
-      gap: 4px;
-      background: var(--glass);
-      border: 1px solid var(--glass-border);
-      border-radius: 14px;
-      padding: 4px;
-      margin: 12px 0 20px;
+      align-items: center;
+      gap: 8px;
     }
-    .nav-tab {
-      flex: 1;
-      padding: 10px 8px;
-      border: none;
-      background: transparent;
-      color: var(--text-muted);
-      font-family: inherit;
-      font-size: 0.78rem;
-      font-weight: 600;
-      border-radius: 10px;
+    .flyer-pill-btn {
+      background: rgba(255, 184, 0, 0.12);
+      border: 1px solid rgba(255, 184, 0, 0.35);
+      color: var(--accent-gold);
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 6px 11px;
+      border-radius: var(--radius-full);
       cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
       transition: var(--transition);
+    }
+    .flyer-pill-btn:active { transform: scale(0.96); }
+    .avatar-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent-crimson), var(--accent-gold));
+      color: #000;
+      font-size: 0.72rem;
+      font-weight: 800;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 5px;
+      cursor: pointer;
+      border: 1.5px solid rgba(255, 255, 255, 0.2);
     }
-    .nav-tab:hover { color: var(--text-secondary); }
-    .nav-tab.active {
-      background: linear-gradient(135deg, var(--accent-purple), var(--accent-deep-purple));
-      color: white;
-      box-shadow: 0 4px 15px var(--accent-purple-glow);
-    }
-    .nav-tab .badge {
-      background: rgba(255,255,255,0.2);
-      padding: 1px 6px;
-      border-radius: 20px;
-      font-size: 0.65rem;
-      font-weight: 700;
+
+    /* ===== CONTENT AREA ===== */
+    .main-content {
+      flex: 1;
+      padding: 14px 16px 20px;
     }
 
     /* ===== VIEWS ===== */
-    .view { display: none; animation: fadeIn 0.4s ease; }
-    .view.active { display: block; }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
+    .view-screen { display: none; }
+    .view-screen.active {
+      display: block;
+      animation: viewSlideIn 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    @keyframes viewSlideIn {
+      from { opacity: 0; transform: translateY(6px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* ===== LOGIN VIEW ===== */
-    .login-view {
+    /* ===== LOGIN SCREEN (Mobile Centered) ===== */
+    .login-container {
+      min-height: calc(80vh - var(--safe-top));
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      min-height: 70vh;
       text-align: center;
-      padding: 20px;
+      padding: 16px 12px;
     }
-    .login-icon {
-      width: 220px;
-      max-width: 80%;
-      border-radius: 16px;
+    .login-hero-poster {
+      width: 200px;
+      max-width: 75vw;
+      border-radius: var(--radius-md);
       overflow: hidden;
-      margin-bottom: 28px;
-      box-shadow: 0 8px 40px rgba(109, 40, 217, 0.25), 0 0 60px rgba(212, 168, 67, 0.15);
-      animation: pulse 2s ease-in-out infinite;
-      border: 2px solid rgba(109, 40, 217, 0.3);
+      border: 2px solid rgba(255, 184, 0, 0.35);
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6), 0 0 40px rgba(255, 138, 0, 0.25);
+      margin-bottom: 22px;
+      cursor: pointer;
+      transition: var(--transition);
     }
-    .login-icon img {
-      width: 100%;
-      height: auto;
+    .login-hero-poster:active { transform: scale(0.98); }
+    .login-hero-poster img {
+      width: 100%; height: auto;
       display: block;
     }
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-    }
-    .login-title {
-      font-size: 1.6rem;
+    .login-badge {
+      font-size: 0.72rem;
       font-weight: 800;
+      color: var(--accent-gold);
+      background: rgba(255, 184, 0, 0.12);
+      border: 1px solid rgba(255, 184, 0, 0.25);
+      padding: 3px 12px;
+      border-radius: var(--radius-full);
       margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .login-heading {
+      font-size: 1.7rem;
+      font-weight: 900;
       letter-spacing: -0.03em;
+      margin-bottom: 6px;
+      background: linear-gradient(135deg, #ffffff 40%, var(--accent-gold) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
-    .login-subtitle {
-      font-size: 0.88rem;
+    .login-desc {
+      font-size: 0.85rem;
       color: var(--text-secondary);
-      margin-bottom: 32px;
       line-height: 1.5;
+      margin-bottom: 24px;
+      max-width: 320px;
     }
-    .login-form {
+    .login-form-wrap {
       width: 100%;
       max-width: 340px;
     }
-    .input-group {
-      position: relative;
-      margin-bottom: 16px;
-    }
-    .input-group input {
+    .mobile-input-box {
       width: 100%;
-      padding: 16px 20px;
-      background: var(--glass);
-      border: 1px solid var(--glass-border);
-      border-radius: var(--radius);
-      color: var(--text-primary);
+      padding: 16px 18px;
+      background: var(--bg-surface);
+      border: 1.5px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      color: #fff;
       font-family: inherit;
       font-size: 1rem;
-      transition: var(--transition);
+      font-weight: 600;
       outline: none;
+      transition: var(--transition);
+      margin-bottom: 14px;
+      text-align: center;
     }
-    .input-group input::placeholder { color: var(--text-muted); }
-    .input-group input:focus {
+    .mobile-input-box:focus {
       border-color: var(--accent-gold);
       box-shadow: 0 0 0 3px var(--accent-gold-glow);
+      background: var(--bg-surface-elevated);
     }
-    .btn {
-      display: inline-flex;
+    .mobile-input-box::placeholder { color: var(--text-muted); }
+
+    .btn-primary-mobile {
+      width: 100%;
+      min-height: 52px;
+      background: linear-gradient(135deg, #e11d48, #ff8a00);
+      color: #ffffff;
+      border: none;
+      border-radius: var(--radius-md);
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
-      padding: 14px 28px;
-      border: none;
-      border-radius: var(--radius);
-      font-family: inherit;
-      font-size: 0.95rem;
-      font-weight: 600;
-      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(225, 29, 72, 0.4);
       transition: var(--transition);
-      text-decoration: none;
-      width: 100%;
     }
-    .btn-primary {
-      background: linear-gradient(135deg, var(--accent-purple), var(--accent-deep-purple));
-      color: #fff;
-      box-shadow: 0 4px 15px var(--accent-purple-glow);
-    }
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px var(--accent-purple-glow);
-    }
-    .btn-primary:active { transform: translateY(0); }
-
-    .btn-outline {
-      background: transparent;
-      border: 1px solid var(--glass-border);
-      color: var(--text-secondary);
-    }
-    .btn-outline:hover {
-      background: var(--glass);
-      border-color: var(--accent-gold);
-      color: var(--accent-gold);
+    .btn-primary-mobile:active {
+      transform: scale(0.97);
+      box-shadow: 0 2px 10px rgba(225, 29, 72, 0.4);
     }
 
-    .btn-sm {
-      padding: 8px 16px;
-      font-size: 0.8rem;
+    /* ===== CALLER STATUS STRIP ===== */
+    .caller-status-strip {
+      background: var(--bg-surface-glass);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border-subtle);
       border-radius: var(--radius-sm);
-      width: auto;
-    }
-
-    /* ===== CALLER INFO BAR ===== */
-    .caller-bar {
+      padding: 8px 12px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 10px 16px;
-      background: var(--glass);
-      border: 1px solid var(--glass-border);
-      border-radius: var(--radius-sm);
-      margin-bottom: 16px;
+      margin-bottom: 12px;
+      font-size: 0.78rem;
     }
-    .caller-bar .caller-name {
+    .caller-pill {
       display: flex;
       align-items: center;
-      gap: 8px;
-      font-size: 0.85rem;
-      font-weight: 600;
-    }
-    .caller-bar .avatar {
-      width: 28px; height: 28px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--accent-purple), var(--accent-gold));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.7rem;
+      gap: 7px;
       font-weight: 700;
     }
-    .caller-bar .logout-btn {
+    .progress-pill-text {
+      color: var(--accent-gold);
+      font-weight: 800;
+      font-size: 0.74rem;
+    }
+    .signout-link {
       background: none;
       border: none;
       color: var(--text-muted);
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       cursor: pointer;
       font-family: inherit;
-      transition: var(--transition);
     }
-    .caller-bar .logout-btn:hover { color: var(--danger); }
 
-    /* ===== PROGRESS BAR ===== */
-    .progress-section {
-      margin-bottom: 20px;
-    }
-    .progress-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-    }
-    .progress-label {
-      font-size: 0.78rem;
-      color: var(--text-secondary);
-      font-weight: 500;
-    }
-    .progress-count {
-      font-size: 0.78rem;
-      color: var(--accent-gold);
-      font-weight: 700;
-    }
-    .progress-bar {
-      height: 6px;
-      background: rgba(255,255,255,0.08);
-      border-radius: 20px;
+    /* ===== PROGRESS METER ===== */
+    .mini-progress-track {
+      width: 100%;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
       overflow: hidden;
-    }
-    .progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--accent-purple), var(--accent-gold));
-      border-radius: 20px;
-      transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 0 0 10px var(--accent-purple-glow);
-    }
-
-    /* ===== CONTACT CARD ===== */
-    .contact-card {
-      background: var(--glass);
-      border: 1px solid var(--glass-border);
-      border-radius: var(--radius);
-      padding: 24px;
-      margin-bottom: 16px;
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-    }
-    .contact-card .label {
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--text-muted);
-      font-weight: 600;
-      margin-bottom: 6px;
-    }
-    .contact-name {
-      font-size: 1.4rem;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-      margin-bottom: 16px;
-      line-height: 1.2;
-    }
-    .phone-display {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .phone-number {
-      font-size: 1.15rem;
-      font-weight: 600;
-      font-family: 'SF Mono', 'Fira Code', monospace;
-      letter-spacing: 0.05em;
-      color: var(--text-secondary);
-    }
-    .phone-number.revealed { color: var(--accent-gold); }
-    .reveal-btn, .call-btn {
-      padding: 8px 14px;
-      border-radius: var(--radius-xs);
-      border: none;
-      font-family: inherit;
-      font-size: 0.75rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: var(--transition);
-    }
-    .reveal-btn {
-      background: var(--info-bg);
-      color: var(--info);
-      border: 1px solid rgba(99, 102, 241, 0.3);
-    }
-    .reveal-btn:hover { background: rgba(99, 102, 241, 0.25); }
-    .call-btn {
-      background: var(--success-bg);
-      color: var(--success);
-      border: 1px solid rgba(16, 185, 129, 0.3);
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-    }
-    .call-btn:hover { background: rgba(16, 185, 129, 0.25); }
-
-    /* ===== CALL SCRIPT ===== */
-    .script-card {
-      background: var(--glass);
-      border: 1px solid var(--glass-border);
-      border-radius: var(--radius);
-      padding: 20px;
-      margin-bottom: 16px;
-      backdrop-filter: blur(10px);
-    }
-    .script-card .script-title {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.85rem;
-      font-weight: 700;
-      color: var(--accent-gold);
       margin-bottom: 14px;
     }
-    .script-text {
-      font-size: 0.88rem;
-      line-height: 1.7;
-      color: var(--text-secondary);
-    }
-    .script-text .highlight {
-      color: var(--text-primary);
-      font-weight: 600;
-    }
-    .script-text .script-section {
-      margin-top: 14px;
-      padding: 12px;
-      border-radius: var(--radius-sm);
-      font-size: 0.83rem;
-    }
-    .script-section.section-prayer {
-      background: rgba(109, 40, 217, 0.12);
-      border-left: 3px solid var(--accent-purple);
-    }
-    .script-section.section-invite {
-      background: var(--success-bg);
-      border-left: 3px solid var(--success);
-    }
-    .script-section.section-closing {
-      background: rgba(212, 168, 67, 0.12);
-      border-left: 3px solid var(--accent-gold);
-    }
-    .script-section-label {
-      font-weight: 700;
-      margin-bottom: 4px;
+    .mini-progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #ef4444, #ff8a00, #ffb800);
+      border-radius: 10px;
+      transition: width 0.4s ease;
     }
 
-    /* ===== RESPONSE BUTTONS ===== */
-    .response-section {
-      margin-bottom: 16px;
+    /* ===== HERO CONTACT CARD (MOBILE) ===== */
+    .m-contact-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 18px 16px;
+      margin-bottom: 14px;
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
+      position: relative;
+      overflow: hidden;
     }
-    .response-label {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--text-muted);
-      font-weight: 600;
-      margin-bottom: 10px;
+    .m-contact-card::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--accent-crimson), var(--accent-gold));
     }
-    .response-buttons {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
+    .m-contact-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
     }
-
-    /* ===== PRAYER REQUEST SECTION (shown on YES) ===== */
-    .prayer-section {
-      display: none;
-      margin-bottom: 16px;
-      animation: fadeIn 0.4s ease;
-    }
-    .prayer-section.visible { display: block; }
-    .prayer-section-label {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--accent-purple);
-      font-weight: 600;
-      margin-bottom: 10px;
-    }
-    .prayer-input-group textarea {
-      width: 100%;
-      padding: 14px 16px;
-      background: rgba(109, 40, 217, 0.08);
-      border: 1px solid rgba(109, 40, 217, 0.25);
-      border-radius: var(--radius-sm);
-      color: var(--text-primary);
-      font-family: inherit;
-      font-size: 0.85rem;
-      resize: vertical;
-      min-height: 60px;
-      outline: none;
-      transition: var(--transition);
-    }
-    .prayer-input-group textarea::placeholder { color: var(--text-muted); }
-    .prayer-input-group textarea:focus {
-      border-color: var(--accent-purple);
-      box-shadow: 0 0 0 3px var(--accent-purple-glow);
-    }
-
-    .response-btn {
-      padding: 14px 12px;
-      border-radius: var(--radius-sm);
-      border: 2px solid transparent;
-      font-family: inherit;
-      font-size: 0.88rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: var(--transition);
+    .m-contact-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(255, 184, 0, 0.2));
+      border: 1.5px solid var(--accent-gold);
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-    }
-    .response-btn.btn-yes {
-      background: var(--success-bg);
-      color: var(--success);
-      border-color: rgba(16, 185, 129, 0.3);
-    }
-    .response-btn.btn-yes:hover, .response-btn.btn-yes.selected {
-      background: var(--success);
-      color: white;
-      box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
-      transform: scale(1.02);
-    }
-    .response-btn.btn-no {
-      background: var(--danger-bg);
-      color: var(--danger);
-      border-color: rgba(239, 68, 68, 0.3);
-    }
-    .response-btn.btn-no:hover, .response-btn.btn-no.selected {
-      background: var(--danger);
-      color: white;
-      box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
-      transform: scale(1.02);
-    }
-    .response-btn.btn-tbc {
-      background: var(--warning-bg);
-      color: var(--warning);
-      border-color: rgba(245, 158, 11, 0.3);
-    }
-    .response-btn.btn-tbc:hover, .response-btn.btn-tbc.selected {
-      background: var(--warning);
-      color: white;
-      box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
-      transform: scale(1.02);
-    }
-    .response-btn.btn-na {
-      background: var(--info-bg);
-      color: var(--info);
-      border-color: rgba(99, 102, 241, 0.3);
-    }
-    .response-btn.btn-na:hover, .response-btn.btn-na.selected {
-      background: var(--info);
-      color: white;
-      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
-      transform: scale(1.02);
-    }
-
-    /* ===== NOTES INPUT ===== */
-    .notes-group {
-      margin-bottom: 16px;
-    }
-    .notes-group textarea {
-      width: 100%;
-      padding: 14px 16px;
-      background: var(--glass);
-      border: 1px solid var(--glass-border);
-      border-radius: var(--radius-sm);
-      color: var(--text-primary);
-      font-family: inherit;
-      font-size: 0.88rem;
-      resize: vertical;
-      min-height: 70px;
-      outline: none;
-      transition: var(--transition);
-    }
-    .notes-group textarea::placeholder { color: var(--text-muted); }
-    .notes-group textarea:focus {
-      border-color: var(--accent-purple);
-      box-shadow: 0 0 0 3px var(--accent-purple-glow);
-    }
-
-    .submit-row {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 30px;
-    }
-    .submit-row .btn { flex: 1; }
-
-    .btn-success {
-      background: linear-gradient(135deg, var(--success), #059669);
-      color: white;
-    }
-    .btn-success:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
-    }
-    .btn-skip {
-      background: var(--glass);
-      border: 1px solid var(--glass-border);
-      color: var(--text-secondary);
-    }
-    .btn-skip:hover {
-      background: var(--bg-card-hover);
-    }
-
-    /* ===== EMPTY STATE ===== */
-    .empty-state {
-      text-align: center;
-      padding: 60px 20px;
-    }
-    .empty-icon {
-      font-size: 48px;
-      margin-bottom: 16px;
-    }
-    .empty-title {
-      font-size: 1.2rem;
-      font-weight: 700;
-      margin-bottom: 8px;
-    }
-    .empty-text {
-      font-size: 0.88rem;
-      color: var(--text-secondary);
-      line-height: 1.5;
-    }
-
-    /* ===== DASHBOARD ===== */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-      margin-bottom: 20px;
-    }
-    .stat-card {
-      background: var(--glass);
-      border: 1px solid var(--glass-border);
-      border-radius: var(--radius);
-      padding: 16px;
-      text-align: center;
-      backdrop-filter: blur(10px);
-      transition: var(--transition);
-    }
-    .stat-card:hover { transform: translateY(-2px); }
-    .stat-number {
-      font-size: 1.8rem;
-      font-weight: 900;
-      letter-spacing: -0.03em;
-      line-height: 1;
-      margin-bottom: 4px;
-    }
-    .stat-number.gold { color: var(--accent-gold); }
-    .stat-number.green { color: var(--success); }
-    .stat-number.red { color: var(--danger); }
-    .stat-number.orange { color: var(--warning); }
-    .stat-number.purple { color: var(--info); }
-    .stat-number.white { color: var(--text-primary); }
-    .stat-label {
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--text-muted);
-      font-weight: 600;
-    }
-
-    /* ===== CHART ===== */
-    .chart-card {
-      background: var(--glass);
-      border: 1px solid var(--glass-border);
-      border-radius: var(--radius);
-      padding: 20px;
-      margin-bottom: 20px;
-    }
-    .chart-title {
-      font-size: 0.85rem;
-      font-weight: 700;
-      margin-bottom: 16px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .donut-chart {
-      width: 160px;
-      height: 160px;
-      margin: 0 auto 16px;
-      position: relative;
-    }
-    .donut-chart canvas {
-      width: 100%;
-      height: 100%;
-    }
-    .donut-center {
-      position: absolute;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      text-align: center;
-    }
-    .donut-center .big-number {
-      font-size: 1.6rem;
-      font-weight: 900;
-      color: var(--text-primary);
-    }
-    .donut-center .small-text {
-      font-size: 0.65rem;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-    .chart-legend {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 8px;
-    }
-    .legend-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.78rem;
-      color: var(--text-secondary);
-    }
-    .legend-dot {
-      width: 10px; height: 10px;
-      border-radius: 50%;
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--accent-gold);
       flex-shrink: 0;
     }
-    .legend-value {
-      margin-left: auto;
-      font-weight: 700;
-      color: var(--text-primary);
+    .m-contact-identity {
+      flex: 1;
+      min-width: 0;
     }
-
-    /* ===== LEADERBOARD ===== */
-    .section-title {
-      font-size: 0.85rem;
-      font-weight: 700;
-      margin-bottom: 12px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .leaderboard {
-      background: var(--glass);
-      border: 1px solid var(--glass-border);
-      border-radius: var(--radius);
-      overflow: hidden;
-      margin-bottom: 20px;
-    }
-    .leaderboard-item {
-      display: flex;
-      align-items: center;
-      padding: 14px 16px;
-      gap: 12px;
-      border-bottom: 1px solid rgba(255,255,255,0.04);
-      transition: var(--transition);
-    }
-    .leaderboard-item:last-child { border-bottom: none; }
-    .leaderboard-item:hover { background: var(--bg-card-hover); }
-    .lb-rank {
-      font-size: 0.85rem;
+    .m-contact-num-badge {
+      font-size: 0.65rem;
       font-weight: 800;
       color: var(--text-muted);
-      min-width: 24px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 2px;
     }
-    .lb-rank.top { color: var(--accent-gold); }
-    .lb-avatar {
-      width: 32px; height: 32px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--accent-purple), var(--accent-gold));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.7rem;
-      font-weight: 700;
-      flex-shrink: 0;
-    }
-    .lb-info { flex: 1; min-width: 0; }
-    .lb-name {
-      font-size: 0.85rem;
-      font-weight: 600;
+    .m-contact-name {
+      font-size: 1.35rem;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      color: #fff;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    .lb-meta {
-      font-size: 0.7rem;
-      color: var(--text-muted);
+    .m-phone-row {
       display: flex;
-      gap: 8px;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: var(--radius-sm);
+      padding: 8px 12px;
+      margin-bottom: 14px;
     }
-    .lb-meta span { display: flex; align-items: center; gap: 3px; }
-    .lb-calls {
-      font-size: 1rem;
-      font-weight: 800;
+    .m-phone-val {
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      letter-spacing: 0.04em;
+    }
+    .m-phone-val.revealed {
       color: var(--accent-gold);
     }
-
-    /* ===== CALL LOG TABLE ===== */
-    .log-card {
-      background: var(--glass);
-      border: 1px solid var(--glass-border);
-      border-radius: var(--radius);
-      overflow: hidden;
-      margin-bottom: 20px;
-    }
-    .log-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 14px 16px;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-    }
-    .log-header h3 {
-      font-size: 0.85rem;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .log-filters {
+    .m-phone-actions {
       display: flex;
       gap: 6px;
-      padding: 10px 16px;
-      border-bottom: 1px solid rgba(255,255,255,0.04);
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
     }
-    .filter-chip {
-      padding: 5px 12px;
-      border-radius: 20px;
-      border: 1px solid var(--glass-border);
-      background: transparent;
-      color: var(--text-muted);
-      font-family: inherit;
-      font-size: 0.72rem;
-      font-weight: 600;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: var(--transition);
-    }
-    .filter-chip:hover { color: var(--text-secondary); border-color: rgba(255,255,255,0.2); }
-    .filter-chip.active {
-      background: var(--accent-purple);
-      color: white;
-      border-color: var(--accent-purple);
-    }
-    .log-list { max-height: 400px; overflow-y: auto; }
-    .log-item {
-      display: flex;
-      align-items: flex-start;
-      padding: 12px 16px;
-      gap: 12px;
-      border-bottom: 1px solid rgba(255,255,255,0.03);
-      transition: var(--transition);
-    }
-    .log-item:hover { background: var(--bg-card-hover); }
-    .log-status-dot {
-      width: 8px; height: 8px;
-      border-radius: 50%;
-      flex-shrink: 0;
-      margin-top: 6px;
-    }
-    .log-status-dot.yes { background: var(--success); }
-    .log-status-dot.no { background: var(--danger); }
-    .log-status-dot.tbc { background: var(--warning); }
-    .log-status-dot.no-answer { background: var(--info); }
-    .log-details { flex: 1; min-width: 0; }
-    .log-contact-name {
-      font-size: 0.83rem;
-      font-weight: 600;
-      margin-bottom: 2px;
-    }
-    .log-phone-masked {
-      font-size: 0.72rem;
-      color: var(--text-muted);
-      font-family: monospace;
-    }
-    .log-right {
-      text-align: right;
-      flex-shrink: 0;
-    }
-    .log-response-badge {
-      display: inline-block;
-      padding: 3px 10px;
-      border-radius: 20px;
-      font-size: 0.68rem;
+    .m-icon-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: none;
+      color: #fff;
+      font-size: 0.74rem;
       font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-    .badge-yes { background: var(--success-bg); color: var(--success); }
-    .badge-no { background: var(--danger-bg); color: var(--danger); }
-    .badge-tbc { background: var(--warning-bg); color: var(--warning); }
-    .badge-no-answer { background: var(--info-bg); color: var(--info); }
-    .log-caller-name {
-      font-size: 0.68rem;
-      color: var(--text-muted);
-      margin-top: 3px;
-    }
-    .log-time {
-      font-size: 0.65rem;
-      color: var(--text-muted);
-    }
-
-    /* ===== EXPORT ===== */
-    .export-section {
-      margin-bottom: 40px;
-      text-align: center;
-    }
-
-    /* ===== TOAST ===== */
-    .toast {
-      position: fixed;
-      bottom: 30px;
-      left: 50%;
-      transform: translateX(-50%) translateY(100px);
-      background: var(--bg-secondary);
-      border: 1px solid var(--glass-border);
-      color: white;
-      padding: 14px 24px;
-      border-radius: var(--radius-sm);
-      font-size: 0.85rem;
-      font-weight: 600;
-      box-shadow: var(--shadow);
-      z-index: 1000;
-      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      padding: 5px 9px;
+      border-radius: var(--radius-xs);
+      cursor: pointer;
+      font-family: inherit;
       display: flex;
       align-items: center;
-      gap: 8px;
-      white-space: nowrap;
-    }
-    .toast.show { transform: translateX(-50%) translateY(0); }
-
-    /* ===== SCROLLBAR ===== */
-    ::-webkit-scrollbar { width: 4px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb {
-      background: rgba(255,255,255,0.1);
-      border-radius: 20px;
-    }
-
-    /* ===== DASHBOARD WIDE VIEW (tablets+) ===== */
-    @media (min-width: 768px) {
-      .app { max-width: 800px; }
-      .stats-grid { grid-template-columns: repeat(3, 1fr); }
-      .response-buttons { grid-template-columns: repeat(4, 1fr); }
-    }
-    @media (min-width: 1024px) {
-      .app { max-width: 960px; }
-      .stats-grid { grid-template-columns: repeat(6, 1fr); }
-    }
-
-    /* ===== SEARCH BAR ===== */
-    .search-bar {
-      position: relative;
-      margin-bottom: 16px;
-    }
-    .search-bar input {
-      width: 100%;
-      padding: 12px 16px 12px 40px;
-      background: var(--glass);
-      border: 1px solid var(--glass-border);
-      border-radius: var(--radius-sm);
-      color: var(--text-primary);
-      font-family: inherit;
-      font-size: 0.85rem;
-      outline: none;
+      gap: 4px;
       transition: var(--transition);
     }
-    .search-bar input::placeholder { color: var(--text-muted); }
-    .search-bar input:focus {
-      border-color: var(--accent-purple);
-      box-shadow: 0 0 0 3px var(--accent-purple-glow);
-    }
-    .search-bar .search-icon {
-      position: absolute;
-      left: 14px;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 0.85rem;
-      color: var(--text-muted);
-    }
+    .m-icon-btn:active { transform: scale(0.95); }
 
-    /* ===== SCRIPT TOGGLE ===== */
-    .script-toggle {
+    /* Hero Call Button & WhatsApp Hub */
+    .m-action-hub {
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+    .m-hero-call-btn {
+      width: 100%;
+      min-height: 52px;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      border: none;
+      border-radius: var(--radius-md);
+      color: #ffffff;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35);
+      transition: var(--transition);
+      cursor: pointer;
+    }
+    .m-hero-call-btn:active {
+      transform: scale(0.97);
+      box-shadow: 0 2px 10px rgba(16, 185, 129, 0.35);
+    }
+    .m-secondary-action-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .m-whatsapp-btn {
+      min-height: 44px;
+      background: rgba(37, 211, 102, 0.15);
+      border: 1px solid rgba(37, 211, 102, 0.35);
+      color: #25d366;
+      border-radius: var(--radius-sm);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      transition: var(--transition);
+    }
+    .m-whatsapp-btn:active { transform: scale(0.96); }
+    .m-copy-btn {
+      min-height: 44px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      font-family: inherit;
+      transition: var(--transition);
+    }
+    .m-copy-btn:active { transform: scale(0.96); }
+
+    /* ===== MOBILE SCRIPT ACCORDION ===== */
+    .m-script-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+    .m-script-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
       cursor: pointer;
       user-select: none;
     }
-    .script-toggle .chevron {
+    .m-script-title {
+      font-size: 0.86rem;
+      font-weight: 800;
+      color: var(--accent-gold);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .m-chevron {
+      font-size: 0.75rem;
+      color: var(--text-muted);
       transition: transform 0.3s ease;
-      font-size: 0.75rem;
-      color: var(--text-muted);
     }
-    .script-toggle .chevron.open {
-      transform: rotate(180deg);
-    }
-    .script-body {
+    .m-chevron.open { transform: rotate(180deg); }
+    .m-script-body {
       overflow: hidden;
-      transition: max-height 0.4s ease, opacity 0.3s ease;
+      transition: max-height 0.35s ease, opacity 0.25s ease;
+      margin-top: 12px;
     }
-    .script-body.collapsed {
-      max-height: 0;
-      opacity: 0;
-    }
-    .script-body.expanded {
-      max-height: 1200px;
-      opacity: 1;
-    }
+    .m-script-body.collapsed { max-height: 0; opacity: 0; margin-top: 0; }
+    .m-script-body.expanded { max-height: 1800px; opacity: 1; }
 
-    /* ===== CONTACT # INDICATOR ===== */
-    .contact-indicator {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      margin-bottom: 12px;
-      font-size: 0.75rem;
-      color: var(--text-muted);
-    }
-    .contact-indicator .current {
-      color: var(--accent-gold);
-      font-weight: 700;
+    /* Speech Bubble Prompts */
+    .speech-bubble {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: var(--radius-md);
+      padding: 13px 14px;
+      margin-bottom: 10px;
       font-size: 0.85rem;
+      line-height: 1.6;
+      color: var(--text-secondary);
     }
-
-    /* ===== SEARCH LOOKUP PANEL ===== */
-    .lookup-toggle {
+    .speech-label {
+      font-size: 0.65rem;
+      font-weight: 800;
+      color: var(--accent-gold);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 4px;
       display: flex;
       align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 10px 16px;
-      margin-bottom: 16px;
-      background: linear-gradient(135deg, rgba(212, 168, 67, 0.1), rgba(109, 40, 217, 0.1));
-      border: 1px dashed rgba(212, 168, 67, 0.3);
-      border-radius: var(--radius-sm);
-      color: var(--accent-gold);
-      font-family: inherit;
-      font-size: 0.82rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: var(--transition);
-      width: 100%;
+      gap: 4px;
     }
-    .lookup-toggle:hover {
-      background: linear-gradient(135deg, rgba(212, 168, 67, 0.15), rgba(109, 40, 217, 0.15));
-      border-color: var(--accent-gold);
-    }
-    .lookup-toggle.active {
-      background: linear-gradient(135deg, var(--accent-purple), var(--accent-deep-purple));
+    .highlight-name {
       color: #fff;
-      border-style: solid;
+      font-weight: 800;
+      background: rgba(255, 184, 0, 0.15);
+      padding: 1px 6px;
+      border-radius: 4px;
+      border: 1px solid rgba(255, 184, 0, 0.3);
     }
-    .lookup-panel {
-      display: none;
-      margin-bottom: 20px;
-      animation: fadeIn 0.3s ease;
+    .speech-bubble strong { color: #fff; }
+
+    /* Event Details Grid (Mobile Pill Cards) */
+    .m-event-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin: 10px 0;
     }
-    .lookup-panel.active { display: block; }
-    .lookup-search {
-      position: relative;
-      margin-bottom: 12px;
+    .m-event-pill {
+      background: rgba(255, 184, 0, 0.06);
+      border: 1px solid rgba(255, 184, 0, 0.2);
+      border-radius: var(--radius-sm);
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
     }
-    .lookup-search input {
-      width: 100%;
-      padding: 14px 16px 14px 42px;
-      background: var(--glass);
-      border: 2px solid var(--accent-purple);
-      border-radius: var(--radius);
+    .m-event-pill.full-width { grid-column: span 2; }
+    .m-event-pill-label {
+      font-size: 0.65rem;
+      font-weight: 800;
+      color: var(--accent-gold);
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .m-event-pill-val {
+      font-size: 0.78rem;
+      font-weight: 600;
       color: var(--text-primary);
+      line-height: 1.3;
+    }
+    .m-map-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      color: var(--accent-gold);
+      text-decoration: none;
+      font-size: 0.72rem;
+      font-weight: 700;
+      margin-top: 4px;
+    }
+
+    /* Interactive Script Branch Tabs */
+    .m-branch-tabs {
+      display: flex;
+      gap: 6px;
+      margin: 10px 0;
+    }
+    .m-branch-btn {
+      flex: 1;
+      padding: 8px 6px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-subtle);
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text-muted);
       font-family: inherit;
-      font-size: 0.95rem;
-      outline: none;
+      font-size: 0.74rem;
+      font-weight: 800;
+      cursor: pointer;
+      text-align: center;
       transition: var(--transition);
     }
-    .lookup-search input::placeholder { color: var(--text-muted); }
-    .lookup-search input:focus {
-      box-shadow: 0 0 0 3px var(--accent-purple-glow);
+    .m-branch-btn.active[data-branch="will-attend"] {
+      background: var(--status-attend-bg);
+      color: var(--status-attend);
+      border-color: var(--status-attend);
     }
-    .lookup-search .search-icon {
-      position: absolute;
-      left: 14px;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 1rem;
-      color: var(--accent-purple);
+    .m-branch-btn.active[data-branch="unsure"] {
+      background: var(--status-unsure-bg);
+      color: var(--status-unsure);
+      border-color: var(--status-unsure);
     }
-    .lookup-hint {
-      font-size: 0.72rem;
-      color: var(--text-muted);
-      text-align: center;
+    .m-branch-btn.active[data-branch="not-attend"] {
+      background: var(--status-no-bg);
+      color: var(--status-no);
+      border-color: var(--status-no);
+    }
+
+    .m-branch-content {
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 0.82rem;
+      line-height: 1.55;
+      display: none;
       margin-bottom: 10px;
     }
-    .lookup-results {
-      max-height: 300px;
-      overflow-y: auto;
+    .m-branch-content.active-branch {
+      display: block;
+      animation: fadeIn 0.2s ease;
+    }
+    .m-branch-content.branch-yes {
+      background: var(--status-attend-bg);
+      border-left: 3px solid var(--status-attend);
+      color: #fff;
+    }
+    .m-branch-content.branch-unsure {
+      background: var(--status-unsure-bg);
+      border-left: 3px solid var(--status-unsure);
+      color: #fff;
+    }
+    .m-branch-content.branch-no {
+      background: var(--status-no-bg);
+      border-left: 3px solid var(--status-no);
+      color: #fff;
+    }
+
+    /* ===== MOBILE RESPONSE RECORDING SECTION ===== */
+    .m-response-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    .m-box-title {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+
+    /* 2x2 Response Grid (Large Mobile Tap Targets) */
+    .m-response-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 9px;
+      margin-bottom: 14px;
+    }
+    .response-btn {
+      min-height: 52px;
+      padding: 12px 10px;
+      border-radius: var(--radius-md);
+      border: 2px solid transparent;
+      font-family: inherit;
+      font-size: 0.88rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: var(--transition);
+    }
+    .response-btn:active { transform: scale(0.96); }
+
+    .response-btn.btn-yes {
+      background: var(--status-attend-bg);
+      color: var(--status-attend);
+      border-color: rgba(16, 185, 129, 0.35);
+    }
+    .response-btn.btn-yes.selected {
+      background: var(--status-attend);
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(16, 185, 129, 0.4);
+    }
+    .response-btn.btn-unsure {
+      background: var(--status-unsure-bg);
+      color: var(--status-unsure);
+      border-color: rgba(245, 158, 11, 0.35);
+    }
+    .response-btn.btn-unsure.selected {
+      background: var(--status-unsure);
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(245, 158, 11, 0.4);
+    }
+    .response-btn.btn-no {
+      background: var(--status-no-bg);
+      color: var(--status-no);
+      border-color: rgba(239, 68, 68, 0.35);
+    }
+    .response-btn.btn-no.selected {
+      background: var(--status-no);
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(239, 68, 68, 0.4);
+    }
+    .response-btn.btn-na {
+      background: var(--status-na-bg);
+      color: #818cf8;
+      border-color: rgba(99, 102, 241, 0.35);
+    }
+    .response-btn.btn-na.selected {
+      background: var(--status-na);
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(99, 102, 241, 0.4);
+    }
+
+    /* Quick Tag Chips for zero-typing on mobile */
+    .m-quick-tags-wrap {
+      margin-bottom: 12px;
+    }
+    .m-quick-tags-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .m-quick-tags-scroll {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .m-tag-chip {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 5px 10px;
+      border-radius: var(--radius-full);
+      white-space: nowrap;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .m-tag-chip:active {
+      transform: scale(0.95);
+      background: var(--accent-gold);
+      color: #000;
+    }
+
+    /* Prayer Request Section */
+    .prayer-section {
+      display: none;
+      margin-bottom: 12px;
+      animation: fadeIn 0.25s ease;
+    }
+    .prayer-section.visible { display: block; }
+    .prayer-section textarea {
+      width: 100%;
+      min-height: 56px;
+      padding: 10px 12px;
+      background: rgba(255, 184, 0, 0.06);
+      border: 1.5px solid rgba(255, 184, 0, 0.3);
       border-radius: var(--radius-sm);
+      color: #fff;
+      font-family: inherit;
+      font-size: 0.85rem;
+      resize: vertical;
+      outline: none;
+    }
+    .prayer-section textarea:focus {
+      border-color: var(--accent-gold);
+      box-shadow: 0 0 0 3px var(--accent-gold-glow);
+    }
+    .prayer-section textarea::placeholder { color: var(--text-muted); }
+
+    /* Notes Textarea */
+    .notes-group textarea {
+      width: 100%;
+      min-height: 56px;
+      padding: 10px 12px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      color: #fff;
+      font-family: inherit;
+      font-size: 0.85rem;
+      resize: vertical;
+      outline: none;
+      margin-bottom: 14px;
+    }
+    .notes-group textarea:focus {
+      border-color: var(--accent-amber);
+      box-shadow: 0 0 0 3px rgba(255, 138, 0, 0.25);
+    }
+    .notes-group textarea::placeholder { color: var(--text-muted); }
+
+    /* Mobile Submit / Skip Row */
+    .m-submit-strip {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 10px;
+    }
+    .m-submit-btn {
+      min-height: 50px;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-md);
+      font-family: inherit;
+      font-size: 0.95rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: var(--transition);
+      box-shadow: 0 4px 16px rgba(16, 185, 129, 0.35);
+    }
+    .m-submit-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+    .m-submit-btn:not(:disabled):active { transform: scale(0.97); }
+
+    .m-skip-btn {
+      min-height: 50px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      border-radius: var(--radius-md);
+      font-family: inherit;
+      font-size: 0.88rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .m-skip-btn:active { transform: scale(0.96); background: rgba(255, 255, 255, 0.1); }
+
+    /* ===== MOBILE DASHBOARD SCREEN ===== */
+    .m-kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .m-kpi-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 14px 12px;
+      text-align: center;
+    }
+    .m-kpi-num {
+      font-size: 1.65rem;
+      font-weight: 900;
+      line-height: 1.1;
+      margin-bottom: 3px;
+    }
+    .m-kpi-num.gold { color: var(--accent-gold); }
+    .m-kpi-num.green { color: var(--status-attend); }
+    .m-kpi-num.orange { color: var(--status-unsure); }
+    .m-kpi-num.red { color: var(--status-no); }
+    .m-kpi-num.purple { color: #818cf8; }
+    .m-kpi-num.white { color: #ffffff; }
+    .m-kpi-label {
+      font-size: 0.65rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+    }
+
+    .m-chart-panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    .m-chart-title {
+      font-size: 0.82rem;
+      font-weight: 800;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #fff;
+    }
+    .m-donut-container {
+      width: 140px;
+      height: 140px;
+      margin: 0 auto 14px;
+      position: relative;
+    }
+    .m-donut-center {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+    .m-donut-big {
+      font-size: 1.45rem;
+      font-weight: 900;
+      color: #fff;
+    }
+    .m-donut-sub {
+      font-size: 0.6rem;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      font-weight: 700;
+    }
+    .m-legend-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .m-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.74rem;
+      color: var(--text-secondary);
+    }
+    .m-dot {
+      width: 9px; height: 9px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .m-val {
+      margin-left: auto;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    /* Leaderboard & Call Log */
+    .m-section-header {
+      font-size: 0.82rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .m-leaderboard-box, .m-log-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .leaderboard-item {
+      display: flex;
+      align-items: center;
+      padding: 12px 14px;
+      gap: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+    .leaderboard-item:last-child { border-bottom: none; }
+    .lb-rank {
+      font-size: 0.82rem;
+      font-weight: 800;
+      min-width: 22px;
+      color: var(--text-muted);
+    }
+    .lb-avatar {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent-crimson), var(--accent-gold));
+      color: #000;
+      font-size: 0.7rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .lb-info { flex: 1; min-width: 0; }
+    .lb-name {
+      font-size: 0.82rem;
+      font-weight: 800;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .lb-meta { font-size: 0.68rem; color: var(--text-muted); }
+    .lb-calls {
+      font-size: 1rem;
+      font-weight: 900;
+      color: var(--accent-gold);
+    }
+
+    /* Horizontal Segmented Filters */
+    .m-log-filters {
+      display: flex;
+      gap: 6px;
+      padding: 10px 14px;
+      overflow-x: auto;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      -webkit-overflow-scrolling: touch;
+    }
+    .filter-chip {
+      background: transparent;
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      font-family: inherit;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 5px 11px;
+      border-radius: var(--radius-full);
+      white-space: nowrap;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .filter-chip.active {
+      background: linear-gradient(135deg, #e11d48, #ff8a00);
+      color: #fff;
+      border-color: transparent;
+    }
+    .m-search-input {
+      width: calc(100% - 28px);
+      margin: 10px 14px;
+      padding: 10px 14px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      color: #fff;
+      font-family: inherit;
+      font-size: 0.82rem;
+      outline: none;
+    }
+    .m-search-input:focus { border-color: var(--accent-gold); }
+    .m-log-list { max-height: 380px; overflow-y: auto; }
+    .log-item {
+      display: flex;
+      align-items: flex-start;
+      padding: 11px 14px;
+      gap: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    }
+    .log-status-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      margin-top: 5px;
+      flex-shrink: 0;
+    }
+    .log-status-dot.will-attend, .log-status-dot.yes { background: var(--status-attend); }
+    .log-status-dot.unsure { background: var(--status-unsure); }
+    .log-status-dot.not-attend, .log-status-dot.no { background: var(--status-no); }
+    .log-status-dot.no-answer { background: var(--status-na); }
+    .log-details { flex: 1; min-width: 0; }
+    .log-contact-name { font-size: 0.82rem; font-weight: 800; }
+    .log-phone-masked { font-size: 0.7rem; color: var(--text-muted); font-family: monospace; }
+    .log-notes-text { font-size: 0.7rem; color: var(--text-secondary); margin-top: 3px; font-style: italic; }
+    .log-right { text-align: right; flex-shrink: 0; }
+    .log-response-badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: var(--radius-full);
+      font-size: 0.64rem;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+    .badge-yes { background: var(--status-attend-bg); color: var(--status-attend); }
+    .badge-unsure { background: var(--status-unsure-bg); color: var(--status-unsure); }
+    .badge-no { background: var(--status-no-bg); color: var(--status-no); }
+    .badge-no-answer { background: var(--status-na-bg); color: #818cf8; }
+    .log-caller-name { font-size: 0.65rem; color: var(--text-muted); margin-top: 2px; }
+
+    /* ===== NATIVE FIXED BOTTOM TAB BAR ===== */
+    .m-bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 200;
+      background: rgba(8, 7, 13, 0.92);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      justify-content: space-around;
+      padding: 8px 12px max(10px, var(--safe-bottom));
+      max-width: 540px;
+      margin: 0 auto;
+    }
+    .m-nav-item {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-family: inherit;
+      font-size: 0.68rem;
+      font-weight: 700;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      cursor: pointer;
+      padding: 4px 12px;
+      border-radius: var(--radius-sm);
+      position: relative;
+      transition: var(--transition);
+    }
+    .m-nav-item .m-nav-icon {
+      font-size: 1.25rem;
+      line-height: 1;
+    }
+    .m-nav-item.active {
+      color: var(--accent-gold);
+    }
+    .m-nav-item.active .m-nav-icon {
+      transform: translateY(-2px);
+    }
+    .m-nav-badge {
+      position: absolute;
+      top: 2px;
+      right: 8px;
+      background: var(--accent-crimson);
+      color: #fff;
+      font-size: 0.58rem;
+      font-weight: 800;
+      padding: 1px 5px;
+      border-radius: var(--radius-full);
+    }
+
+    /* ===== MOBILE SEARCH LOOKUP SHEET / MODAL ===== */
+    .m-sheet-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 500;
+      display: none;
+      align-items: flex-end; /* Bottom sheet */
+      animation: fadeIn 0.2s ease;
+    }
+    .m-sheet-overlay.active { display: flex; }
+    .m-sheet-card {
+      background: var(--bg-surface-elevated);
+      border-top: 1px solid var(--border-focus);
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+      width: 100%;
+      max-width: 540px;
+      margin: 0 auto;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      padding: 16px 18px calc(16px + var(--safe-bottom));
+      animation: sheetUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    @keyframes sheetUp {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+    .m-sheet-drag-handle {
+      width: 36px;
+      height: 4px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.2);
+      margin: 0 auto 14px;
+    }
+    .m-sheet-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .m-sheet-header h3 {
+      font-size: 1rem;
+      font-weight: 800;
+      color: #fff;
+    }
+    .m-sheet-close {
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      color: #fff;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .m-sheet-search-input {
+      width: 100%;
+      padding: 12px 16px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1.5px solid var(--accent-gold);
+      border-radius: var(--radius-md);
+      color: #fff;
+      font-family: inherit;
+      font-size: 0.92rem;
+      outline: none;
+      margin-bottom: 12px;
+    }
+    .m-sheet-results {
+      flex: 1;
+      overflow-y: auto;
+      max-height: 50vh;
     }
     .lookup-item {
       display: flex;
       align-items: center;
       padding: 12px 14px;
-      gap: 12px;
-      background: var(--glass);
-      border: 1px solid var(--glass-border);
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-subtle);
       border-radius: var(--radius-sm);
-      margin-bottom: 6px;
+      margin-bottom: 7px;
       cursor: pointer;
       transition: var(--transition);
     }
-    .lookup-item:hover {
-      background: var(--bg-card-hover);
-      border-color: var(--accent-gold);
-      transform: translateX(4px);
-    }
-    .lookup-item .li-info { flex: 1; min-width: 0; }
-    .lookup-item .li-name {
-      font-size: 0.88rem;
-      font-weight: 600;
-      margin-bottom: 2px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .lookup-item .li-phone {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      font-family: monospace;
-    }
-    .lookup-item .li-status {
-      flex-shrink: 0;
-    }
-    .lookup-item .li-badge {
-      display: inline-block;
-      padding: 3px 10px;
-      border-radius: 20px;
-      font-size: 0.65rem;
-      font-weight: 700;
+    .lookup-item:active { background: rgba(255, 255, 255, 0.08); }
+    .li-name { font-size: 0.86rem; font-weight: 800; }
+    .li-phone { font-size: 0.72rem; color: var(--text-muted); font-family: monospace; }
+    .li-badge {
+      padding: 3px 9px;
+      border-radius: var(--radius-full);
+      font-size: 0.62rem;
+      font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
     }
-    .li-badge.pending { background: rgba(255,255,255,0.06); color: var(--text-muted); }
 
-    /* ===== LOOKUP MODAL ===== */
-    .lookup-modal-overlay {
+    /* ===== FLYER LIGHTBOX ===== */
+    .flyer-modal-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0, 0, 0, 0.7);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      z-index: 500;
+      background: rgba(0, 0, 0, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      z-index: 600;
       display: none;
       align-items: center;
       justify-content: center;
-      padding: 20px;
-      animation: fadeIn 0.2s ease;
+      padding: 16px;
     }
-    .lookup-modal-overlay.active { display: flex; }
-    .lookup-modal {
-      background: var(--bg-secondary);
-      border: 1px solid var(--glass-border);
-      border-radius: var(--radius);
-      padding: 24px;
+    .flyer-modal-overlay.active { display: flex; }
+    .flyer-modal-content {
       width: 100%;
-      max-width: 420px;
-      max-height: 85vh;
-      overflow-y: auto;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-      animation: slideUp 0.3s ease;
+      max-width: 440px;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      border: 1px solid rgba(255, 184, 0, 0.35);
+      background: var(--bg-surface);
+      display: flex;
+      flex-direction: column;
     }
-    @keyframes slideUp {
-      from { opacity: 0; transform: translateY(30px); }
-      to { opacity: 1; transform: translateY(0); }
+    .flyer-modal-content img {
+      width: 100%;
+      max-height: calc(82vh - 60px);
+      object-fit: contain;
+      display: block;
+      background: #000;
     }
-    .lookup-modal .modal-header {
+    .flyer-modal-footer {
+      padding: 12px 16px;
       display: flex;
       justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 20px;
+      align-items: center;
+      background: var(--bg-surface);
+      border-top: 1px solid var(--border-subtle);
     }
-    .lookup-modal .modal-close {
-      background: none;
-      border: none;
-      color: var(--text-muted);
-      font-size: 1.2rem;
-      cursor: pointer;
-      padding: 4px;
-      transition: var(--transition);
-    }
-    .lookup-modal .modal-close:hover { color: var(--danger); }
-    .lookup-modal .modal-contact-name {
-      font-size: 1.3rem;
+    .flyer-modal-footer span {
+      font-size: 0.76rem;
       font-weight: 800;
-      letter-spacing: -0.02em;
+      color: var(--accent-gold);
     }
-    .lookup-modal .modal-phone {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      font-family: monospace;
-      margin-top: 4px;
+    .flyer-close-btn {
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      color: #fff;
+      padding: 6px 14px;
+      border-radius: var(--radius-full);
+      font-size: 0.76rem;
+      font-weight: 800;
+      cursor: pointer;
     }
-    .lookup-modal .modal-current-status {
-      padding: 10px 14px;
-      border-radius: var(--radius-sm);
-      background: var(--glass);
-      border: 1px solid var(--glass-border);
-      margin-bottom: 16px;
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      top: calc(14px + var(--safe-top));
+      left: 50%;
+      transform: translateX(-50%) translateY(-100px);
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--accent-gold);
+      color: #fff;
+      padding: 11px 20px;
+      border-radius: var(--radius-full);
       font-size: 0.82rem;
+      font-weight: 800;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+      z-index: 1000;
+      transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      white-space: nowrap;
     }
-    .lookup-modal .modal-current-status .status-label {
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--text-muted);
-      font-weight: 600;
-      margin-bottom: 4px;
-    }
-    .lookup-modal .modal-response-buttons {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 8px;
-      margin-bottom: 14px;
-    }
-    .lookup-modal .modal-notes textarea {
-      width: 100%;
-      padding: 12px 14px;
-      background: var(--glass);
-      border: 1px solid var(--glass-border);
-      border-radius: var(--radius-sm);
-      color: var(--text-primary);
-      font-family: inherit;
-      font-size: 0.85rem;
-      resize: vertical;
-      min-height: 60px;
-      outline: none;
-      transition: var(--transition);
-      margin-bottom: 14px;
-    }
-    .lookup-modal .modal-notes textarea::placeholder { color: var(--text-muted); }
-    .lookup-modal .modal-notes textarea:focus {
-      border-color: var(--accent-purple);
-      box-shadow: 0 0 0 3px var(--accent-purple-glow);
-    }
-  
-    /* ===== LOADING OVERLAY ===== */
+    .toast.show { transform: translateX(-50%) translateY(0); }
+
+    /* Loading Overlay */
     .loading-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0, 0, 0, 0.65);
-      backdrop-filter: blur(4px);
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(6px);
       display: flex;
       align-items: center;
       justify-content: center;
       z-index: 9999;
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.3s ease;
+      transition: opacity 0.25s ease;
     }
-    .loading-overlay.active {
-      opacity: 1;
-      pointer-events: all;
-    }
+    .loading-overlay.active { opacity: 1; pointer-events: all; }
     .loading-spinner {
-      width: 48px;
-      height: 48px;
-      border: 4px solid rgba(255,255,255,0.15);
-      border-top-color: var(--accent-purple);
+      width: 44px; height: 44px;
+      border: 4px solid rgba(255, 255, 255, 0.15);
+      border-top-color: var(--accent-gold);
+      border-right-color: var(--accent-crimson);
       border-radius: 50%;
       animation: spin 0.8s linear infinite;
+      margin: 0 auto 12px;
     }
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
+    @keyframes spin { to { transform: rotate(360deg); } }
     .loading-overlay p {
       color: #fff;
-      margin-top: 16px;
-      font-size: 0.9rem;
-      font-weight: 500;
-      letter-spacing: 0.02em;
+      font-size: 0.85rem;
+      font-weight: 700;
     }
-
   </style>
 </head>
 <body>
 
-<div class="ambient-bg">
-  <div class="orb"></div>
-  <div class="orb"></div>
-  <div class="orb"></div>
+<div class="ambient-glow">
+  <div class="glow-1"></div>
+  <div class="glow-2"></div>
 </div>
 
-<div class="app" id="app">
-  <!-- HEADER -->
-  <header class="header">
-    <div class="header-logo">
-      <div class="icon"><img src="flier.png" alt="Harvesters Sheffield"></div>
-      <h1>Harvesters Sheffield</h1>
+<div class="app-shell" id="app">
+  <!-- TOP APP BAR -->
+  <header class="top-bar">
+    <div class="top-bar-brand" id="brandHeaderTrigger">
+      <div class="brand-thumb">
+        <img src="flier.png" alt="Harvesters Birmingham Awakening">
+      </div>
+      <div class="brand-text">
+        <h1>Harvesters Birmingham</h1>
+        <span>Awakening 2026</span>
+      </div>
     </div>
-    <p class="header-subtitle">Call Campaign Manager</p>
+    <div class="top-bar-actions">
+      <button class="flyer-pill-btn" id="topFlyerBtn">🖼️ Flyer</button>
+      <div class="avatar-btn" id="topAvatarBtn" title="Current Caller">HB</div>
+    </div>
   </header>
 
-  <!-- LOGIN VIEW -->
-  <div class="view active" id="loginView">
-    <div class="login-view">
-      <div class="login-icon"><img src="flier.png" alt="Harvesters Sheffield – Mega Service this Sunday at 1:00 PM, Crowne Plaza, Sheffield"></div>
-      <h2 class="login-title">Welcome, Volunteer!</h2>
-      <p class="login-subtitle">Enter your name to start making calls for the Harvesters Sheffield Mega Service outreach campaign.</p>
-      <form class="login-form" id="loginForm">
-        <div class="input-group">
-          <input type="text" id="callerNameInput" placeholder="Enter your full name" autocomplete="name" required>
+  <!-- MAIN SCROLLABLE CONTENT -->
+  <main class="main-content">
+
+    <!-- 1. LOGIN SCREEN -->
+    <section class="view-screen active" id="loginView">
+      <div class="login-container">
+        <div class="login-hero-poster" id="loginFlyerTrigger">
+          <img src="flier.png" alt="Awakening: Breakthrough & Spiritual Renewal">
         </div>
-        <button type="submit" class="btn btn-primary" id="loginBtn">
-          🚀 Start Calling
-        </button>
-      </form>
-    </div>
-  </div>
-
-  <!-- MAIN APP VIEW (after login) -->
-  <div class="view" id="mainView">
-    <!-- Caller Info Bar -->
-    <div class="caller-bar" id="callerBar">
-      <div class="caller-name">
-        <div class="avatar" id="callerAvatar"></div>
-        <span id="callerDisplayName"></span>
-      </div>
-      <button class="logout-btn" id="logoutBtn">Sign Out</button>
-    </div>
-
-    <!-- Nav Tabs -->
-    <div class="nav-tabs">
-      <button class="nav-tab active" data-view="callView" id="callTab">
-        📞 Call <span class="badge" id="pendingBadge">0</span>
-      </button>
-      <button class="nav-tab" data-view="dashboardView" id="dashTab">
-        📊 Dashboard
-      </button>
-    </div>
-
-    <!-- CALL VIEW -->
-    <div class="view active" id="callView">
-      <!-- Search / Lookup Toggle -->
-      <button class="lookup-toggle" id="lookupToggle">
-        🔍 Search Contact (callback / lookup)
-      </button>
-
-      <!-- Search Lookup Panel -->
-      <div class="lookup-panel" id="lookupPanel">
-        <div class="lookup-search">
-          <span class="search-icon">🔍</span>
-          <input type="text" id="lookupInput" placeholder="Search by name or last 4 digits of phone...">
-        </div>
-        <div class="lookup-hint">Type at least 2 characters to search across all contacts</div>
-        <div class="lookup-results" id="lookupResults"></div>
-      </div>
-
-      <!-- Progress -->
-      <div class="progress-section">
-        <div class="progress-header">
-          <span class="progress-label">Your Progress</span>
-          <span class="progress-count" id="progressText">0 / 0</span>
-        </div>
-        <div class="progress-bar">
-          <div class="progress-fill" id="progressFill" style="width: 0%"></div>
-        </div>
-      </div>
-
-      <!-- Contact Card -->
-      <div id="contactArea">
-        <!-- Will be populated by JS -->
-      </div>
-
-      <!-- Call Script (Collapsible) -->
-      <div class="script-card" id="scriptCard">
-        <div class="script-toggle" id="scriptToggle">
-          <div class="script-title">📋 Call Script</div>
-          <span class="chevron open" id="scriptChevron">▼</span>
-        </div>
-        <div class="script-body expanded" id="scriptBody">
-          <div class="script-text">
-            <p>Hello Mr./Mrs. <span class="highlight" id="scriptContactName">[Name]</span>,</p>
-            <br>
-            <p>My name is <span class="highlight" id="scriptCallerName">________</span>, and I am calling on behalf of <span class="highlight">Harvesters</span>.</p>
-            <br>
-            <p>Firstly, I would like to thank you for attending church service and the NLP and to check on your wellbeing. <span class="highlight">How have you been?</span></p>
-            <br>
-            <p>Is there anything you would like us to pray with you about? If so, we would be happy to pass your prayer requests to our <span class="highlight">Location Pastor</span>, who will join you in prayer.</p>
-            <br>
-            <p>I would also like to personally invite you to our <span class="highlight">CARNIVAL Sunday at 1:00 PM</span>, taking place at <span class="highlight">Crown Plaza Victoria Hall, Sheffield S4 7YE</span>.</p>
-            <br>
-            <p>We would be delighted to have you join us. <span class="highlight">Would you be coming alone or with family?</span> <em>(Wait for an answer)</em></p>
-
-            <div class="script-section section-yes" style="background: rgba(16, 185, 129, 0.15); border-left: 3px solid #10b981; padding: 12px; border-radius: 10px; margin-top: 14px;">
-              <div class="script-section-label" style="font-weight: 700; color: #10b981; margin-bottom: 4px;">If YES:</div>
-              Kindly note that the dress code is <strong>anything colourful just not black</strong>. Thank you, and we look forward to seeing you on Sunday.
-            </div>
-
-            <div class="script-section section-no" style="background: rgba(239, 68, 68, 0.15); border-left: 3px solid #ef4444; padding: 12px; border-radius: 10px; margin-top: 10px;">
-              <div class="script-section-label" style="font-weight: 700; color: #ef4444; margin-bottom: 4px;">If NO:</div>
-              We hope you would be able to join us on subsequent services or whenever you are in Sheffield. Have an amazing day.
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Response Section -->
-      <div id="responseArea" style="display:none">
-        <div class="response-section">
-          <div class="response-label">Will they attend the Mega Service?</div>
-          <div class="response-buttons">
-            <button class="response-btn btn-yes" data-response="yes">✅ Yes</button>
-            <button class="response-btn btn-no" data-response="no">❌ No</button>
-            <button class="response-btn btn-tbc" data-response="tbc">⏳ TBC</button>
-            <button class="response-btn btn-na" data-response="no-answer">📵 No Answer</button>
-          </div>
-        </div>
-
-        <!-- Prayer Request Section (shown only when YES selected) -->
-        <div class="prayer-section" id="prayerSection">
-          <div class="prayer-section-label">🙏 Prayer Request (if any)</div>
-          <div class="prayer-input-group">
-            <textarea id="prayerRequestInput" placeholder="Enter their prayer request to forward to the Location Pastor..."></textarea>
-          </div>
-        </div>
-
-        <div class="notes-group">
-          <textarea id="notesInput" placeholder="Optional notes (e.g., reason for No, callback time, wellbeing update...)"></textarea>
-        </div>
-
-        <div class="submit-row">
-          <button class="btn btn-success" id="submitBtn" disabled>
-            ✓ Submit & Next
+        <div class="login-badge">Volunteer Caller Portal</div>
+        <h2 class="login-heading">Awakening 2026</h2>
+        <p class="login-desc">Enter your name to start reaching church members for the Awakening gathering.</p>
+        <form class="login-form-wrap" id="loginForm">
+          <input type="text" id="callerNameInput" class="mobile-input-box" placeholder="Enter your full name" autocomplete="name" required>
+          <button type="submit" class="btn-primary-mobile" id="loginBtn">
+            🔥 Start Calling
           </button>
-          <button class="btn btn-skip" id="skipBtn">
-            Skip →
+          <button type="button" class="btn-demo-mobile" id="demoBtn" onclick="enableDemoMode()" style="width:100%;margin-top:10px;background:rgba(255,255,255,0.06);border:1px solid var(--border-subtle);color:var(--text-muted);border-radius:var(--radius-md);padding:12px;font-size:0.8rem;font-weight:700;cursor:pointer;font-family:inherit;transition:var(--transition);">
+            👀 Preview Demo Mode
           </button>
-        </div>
+        </form>
       </div>
-    </div>
+    </section>
 
-    <!-- Lookup Modal (for updating a searched contact) -->
-    <div class="lookup-modal-overlay" id="lookupModalOverlay">
-      <div class="lookup-modal">
-        <div class="modal-header">
-          <div>
-            <div class="modal-contact-name" id="modalContactName"></div>
-            <div class="modal-phone" id="modalContactPhone"></div>
+    <!-- 2. MAIN APP WRAPPER (After Login) -->
+    <div id="mainView" style="display:none">
+
+      <!-- SUB-SCREEN: CALL VIEW -->
+      <section class="view-screen" id="callView">
+        <!-- Caller Status Strip -->
+        <div class="caller-status-strip">
+          <div class="caller-pill">
+            <span id="callerDisplayName">Volunteer</span>
           </div>
-          <button class="modal-close" id="modalClose">✕</button>
+          <div class="progress-pill-text" id="progressText">0 / 0 Calls</div>
+          <button class="signout-link" id="logoutBtn">Sign Out</button>
         </div>
-        <div class="modal-current-status" id="modalCurrentStatus"></div>
-        <div class="response-label">Record / Update Response</div>
-        <div class="modal-response-buttons">
-          <button class="response-btn btn-yes" data-modal-response="yes">✅ Yes</button>
-          <button class="response-btn btn-no" data-modal-response="no">❌ No</button>
-          <button class="response-btn btn-tbc" data-modal-response="tbc">⏳ TBC</button>
-          <button class="response-btn btn-na" data-modal-response="no-answer">📵 No Answer</button>
-        </div>
-        <div class="modal-notes">
-          <textarea id="modalNotesInput" placeholder="Optional notes..."></textarea>
-        </div>
-        <div class="submit-row">
-          <button class="btn btn-success" id="modalSubmitBtn" disabled>
-            ✓ Save Response
-          </button>
-          <button class="btn btn-outline" id="modalCancelBtn">
-            Cancel
-          </button>
-        </div>
-      </div>
-    </div>
 
-    <!-- DASHBOARD VIEW -->
-    <div class="view" id="dashboardView">
-      <!-- Stats Grid -->
-      <div class="stats-grid" id="statsGrid">
-        <!-- Populated by JS -->
-      </div>
+        <div class="mini-progress-track">
+          <div class="mini-progress-fill" id="progressFill"></div>
+        </div>
 
-      <!-- Chart -->
-      <div class="chart-card" id="chartCard">
-        <div class="chart-title">📊 Response Breakdown</div>
-        <div class="donut-chart">
-          <canvas id="donutCanvas" width="160" height="160"></canvas>
-          <div class="donut-center">
-            <div class="big-number" id="totalCalled">0</div>
-            <div class="small-text">Calls Made</div>
-          </div>
-        </div>
-        <div class="chart-legend" id="chartLegend"></div>
-      </div>
-
-      <!-- Caller Leaderboard -->
-      <div class="section-title">🏆 Caller Leaderboard</div>
-      <div class="leaderboard" id="leaderboard">
-        <!-- Populated by JS -->
-      </div>
-
-      <!-- Call Log -->
-      <div class="log-card">
-        <div class="log-header">
-          <h3>📋 Call Log</h3>
-          <button class="btn btn-outline btn-sm" id="exportBtn">⬇ Export CSV</button>
-        </div>
-        <div class="log-filters" id="logFilters">
-          <button class="filter-chip active" data-filter="all">All</button>
-          <button class="filter-chip" data-filter="yes">✅ Yes</button>
-          <button class="filter-chip" data-filter="no">❌ No</button>
-          <button class="filter-chip" data-filter="tbc">⏳ TBC</button>
-          <button class="filter-chip" data-filter="no-answer">📵 No Answer</button>
-        </div>
-        <div class="search-bar" style="margin: 10px 16px 0;">
-          <span class="search-icon">🔍</span>
-          <input type="text" id="logSearch" placeholder="Search by name or caller...">
-        </div>
-        <div class="log-list" id="logList">
+        <!-- Hero Contact Card -->
+        <div id="contactArea">
           <!-- Populated by JS -->
         </div>
-      </div>
 
-      <!-- Export -->
-      <div class="export-section">
-        <button class="btn btn-outline" id="exportFullBtn" style="max-width: 300px; margin: 0 auto;">
-          📥 Export Full Report (CSV)
-        </button>
+        <!-- Mobile Optimized Call Script -->
+        <div class="m-script-card">
+          <div class="m-script-header" id="scriptToggle">
+            <span class="m-script-title">📋 Call Script (Awakening)</span>
+            <span class="m-chevron open" id="scriptChevron">▼</span>
+          </div>
+          <div class="m-script-body expanded" id="scriptBody">
+            <!-- Step 1: Greeting -->
+            <div class="speech-bubble">
+              <div class="speech-label">1. Introduction</div>
+              <p>"Hello, may I speak with <span class="highlight-name" id="scriptContactName">[Name]</span>?"</p>
+              <p style="margin-top:6px;">"Hi <span class="highlight-name" id="scriptContactFirstName">[Name]</span>, my name is <strong id="scriptCallerName">[Your Name]</strong>, and I’m calling from <strong>Harvesters Birmingham</strong>. I hope you’re doing well."</p>
+              <p style="margin-top:6px;">"I’m calling to specially invite you to <strong>Awakening</strong>, our two day gathering focused on breakthrough and spiritual renewal. It’s going to be a powerful time of prayer, worship and the word, and we would really love for you to be part of it."</p>
+            </div>
+
+            <!-- Event Details Pill Grid -->
+            <div class="m-event-grid">
+              <div class="m-event-pill full-width">
+                <span class="m-event-pill-label">📍 Venue</span>
+                <span class="m-event-pill-val">Park Regis, 160 Broad St, Birmingham B15 1DT</span>
+                <a href="https://maps.google.com/?q=Park+Regis+160+Broad+St+Birmingham+B15+1DT" target="_blank" rel="noopener" class="m-map-btn">🗺️ Open in Google Maps →</a>
+              </div>
+              <div class="m-event-pill">
+                <span class="m-event-pill-label">🗓️ Dates</span>
+                <span class="m-event-pill-val">Sat 26th &amp; Sun 27th Sept</span>
+              </div>
+              <div class="m-event-pill">
+                <span class="m-event-pill-label">🕙 Time</span>
+                <span class="m-event-pill-val">09:00am - 03:00pm</span>
+              </div>
+              <div class="m-event-pill full-width">
+                <span class="m-event-pill-label">🚗 Parking</span>
+                <span class="m-event-pill-val">Free parking and on-street parking available</span>
+              </div>
+            </div>
+
+            <!-- Step 2: Engage -->
+            <div class="speech-bubble" style="border-color: rgba(255, 184, 0, 0.35);">
+              <div class="speech-label">2. Engage (The Ask)</div>
+              <p style="font-size: 0.98rem; font-weight: 800; color: #fff;">"Will you be able to join us?"</p>
+            </div>
+
+            <!-- Interactive Script Branch Tabs -->
+            <div class="m-branch-tabs">
+              <button class="m-branch-btn active" data-branch="will-attend" onclick="selectScriptBranch('will-attend')">✅ If YES</button>
+              <button class="m-branch-btn" data-branch="unsure" onclick="selectScriptBranch('unsure')">⏳ If UNSURE</button>
+              <button class="m-branch-btn" data-branch="not-attend" onclick="selectScriptBranch('not-attend')">❌ If NO</button>
+            </div>
+
+            <div class="m-branch-content branch-yes active-branch" data-branch="will-attend">
+              <strong>If they say YES:</strong><br>
+              "That’s great! We look forward to welcoming you. Feel free to invite your family and friends too."
+            </div>
+
+            <div class="m-branch-content branch-unsure" data-branch="unsure">
+              <strong>If they’re UNSURE:</strong><br>
+              "No problem at all. I just wanted to personally invite you and make sure you’re aware of it. We’d love to have you with us if you’re able to make it, even if it’s just for one day."
+            </div>
+
+            <div class="m-branch-content branch-no" data-branch="not-attend">
+              <strong>If they say NO:</strong><br>
+              "That’s absolutely fine. Thank you for your time, and we hope to welcome you at one of our upcoming services."
+            </div>
+
+            <!-- Step 3: Closing Blessing -->
+            <div class="speech-bubble">
+              <div class="speech-label">3. Closing Blessing</div>
+              <p>"Thank you for your time. Have a lovely day, and God bless you."</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Response Logging Box (Thumb-Friendly) -->
+        <div class="m-response-box" id="responseArea" style="display:none">
+          <div class="m-box-title">Record Member Response</div>
+          
+          <div class="m-response-grid">
+            <button class="response-btn btn-yes" data-response="will-attend">✅ Will Attend</button>
+            <button class="response-btn btn-unsure" data-response="unsure">⏳ Unsure</button>
+            <button class="response-btn btn-no" data-response="not-attend">❌ Not Attend</button>
+            <button class="response-btn btn-na" data-response="no-answer">📵 No Answer</button>
+          </div>
+
+          <!-- Quick Tag Chips for Zero-Typing on Mobile -->
+          <div class="m-quick-tags-wrap">
+            <div class="m-quick-tags-label">Quick Notes (Tap to add):</div>
+            <div class="m-quick-tags-scroll">
+              <span class="m-tag-chip" onclick="addQuickTag('🙏 Prayer Request')">🙏 Prayer Request</span>
+              <span class="m-tag-chip" onclick="addQuickTag('👥 Coming with Family')">👥 Bringing Family</span>
+              <span class="m-tag-chip" onclick="addQuickTag('⏰ Call Back Later')">⏰ Call Back</span>
+              <span class="m-tag-chip" onclick="addQuickTag('🚗 Needs Parking Info')">🚗 Parking Info</span>
+              <span class="m-tag-chip" onclick="addQuickTag('📍 Out of Town')">📍 Out of Town</span>
+              <span class="m-tag-chip" onclick="addQuickTag('🚫 Wrong Number')">🚫 Wrong Number</span>
+            </div>
+          </div>
+
+          <!-- Prayer Request Field -->
+          <div class="prayer-section" id="prayerSection">
+            <textarea id="prayerRequestInput" placeholder="Enter prayer request to forward to Pastors..."></textarea>
+          </div>
+
+          <!-- Notes Textarea -->
+          <div class="notes-group">
+            <textarea id="notesInput" placeholder="Additional notes or callback details..."></textarea>
+          </div>
+
+          <!-- Submit Strip -->
+          <div class="m-submit-strip">
+            <button class="m-submit-btn" id="submitBtn" disabled>
+              ✓ Submit &amp; Next
+            </button>
+            <button class="m-skip-btn" id="skipBtn">
+              Skip →
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- SUB-SCREEN: DASHBOARD VIEW -->
+      <section class="view-screen" id="dashboardView">
+        <div class="m-kpi-grid" id="statsGrid">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Donut Chart -->
+        <div class="m-chart-panel">
+          <div class="m-chart-title">📊 Response Breakdown</div>
+          <div class="m-donut-container">
+            <canvas id="donutCanvas" width="140" height="140"></canvas>
+            <div class="m-donut-center">
+              <div class="m-donut-big" id="totalCalled">0</div>
+              <div class="m-donut-sub">Calls Made</div>
+            </div>
+          </div>
+          <div class="m-legend-grid" id="chartLegend"></div>
+        </div>
+
+        <!-- Leaderboard -->
+        <div class="m-section-header">
+          <span>🏆 Volunteer Leaderboard</span>
+        </div>
+        <div class="m-leaderboard-box" id="leaderboard">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Call Log -->
+        <div class="m-section-header">
+          <span>📋 Call Activity Log</span>
+          <button class="flyer-pill-btn" id="exportBtn" style="font-size:0.68rem;padding:3px 8px;">⬇ CSV</button>
+        </div>
+        <div class="m-log-box">
+          <div class="m-log-filters" id="logFilters">
+            <button class="filter-chip active" data-filter="all">All</button>
+            <button class="filter-chip" data-filter="will-attend">✅ Attending</button>
+            <button class="filter-chip" data-filter="unsure">⏳ Unsure</button>
+            <button class="filter-chip" data-filter="not-attend">❌ No</button>
+            <button class="filter-chip" data-filter="no-answer">📵 No Answer</button>
+          </div>
+          <input type="text" id="logSearch" class="m-search-input" placeholder="Search by name or caller...">
+          <div class="m-log-list" id="logList">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- FIXED NATIVE BOTTOM NAVIGATION BAR -->
+  <nav class="m-bottom-nav" id="bottomNav" style="display:none">
+    <button class="m-nav-item active" data-nav="callView" id="navCallBtn">
+      <span class="m-nav-icon">📞</span>
+      <span>Call</span>
+      <span class="m-nav-badge" id="pendingBadge">0</span>
+    </button>
+    <button class="m-nav-item" data-nav="searchSheet" id="navSearchBtn">
+      <span class="m-nav-icon">🔍</span>
+      <span>Search</span>
+    </button>
+    <button class="m-nav-item" data-nav="dashboardView" id="navDashBtn">
+      <span class="m-nav-icon">📊</span>
+      <span>Stats</span>
+    </button>
+    <button class="m-nav-item" data-nav="flyerModal" id="navFlyerBtn">
+      <span class="m-nav-icon">🖼️</span>
+      <span>Flyer</span>
+    </button>
+  </nav>
+
+  <!-- SEARCH LOOKUP BOTTOM SHEET -->
+  <div class="m-sheet-overlay" id="lookupSheet">
+    <div class="m-sheet-card">
+      <div class="m-sheet-drag-handle"></div>
+      <div class="m-sheet-header">
+        <h3>🔍 Search Contacts</h3>
+        <button class="m-sheet-close" id="lookupSheetClose">✕</button>
+      </div>
+      <input type="text" id="lookupInput" class="m-sheet-search-input" placeholder="Type member name or phone digits...">
+      <div class="m-sheet-results" id="lookupResults">
+        <div style="text-align:center;padding:24px;color:var(--text-muted);font-size:0.8rem;">
+          Search across 1,816 contacts by name or last 4 digits
+        </div>
       </div>
     </div>
   </div>
-</div>
 
-<!-- Toast -->
-<div class="toast" id="toast"></div>
+  <!-- CONTACT LOOKUP / EDIT MODAL -->
+  <div class="m-sheet-overlay" id="lookupModalOverlay">
+    <div class="m-sheet-card">
+      <div class="m-sheet-drag-handle"></div>
+      <div class="m-sheet-header">
+        <div>
+          <h3 id="modalContactName">Contact Name</h3>
+          <div id="modalContactPhone" style="font-size:0.8rem;color:var(--accent-gold);font-family:monospace;margin-top:2px;"></div>
+        </div>
+        <button class="m-sheet-close" id="modalClose">✕</button>
+      </div>
+      <div id="modalCurrentStatus" style="background:rgba(255,255,255,0.04);padding:8px 12px;border-radius:10px;font-size:0.8rem;margin-bottom:12px;"></div>
+      <div style="font-size:0.72rem;font-weight:800;color:var(--text-muted);margin-bottom:8px;text-transform:uppercase;">Update Status</div>
+      <div class="m-response-grid" style="margin-bottom:12px;">
+        <button class="response-btn btn-yes" data-modal-response="will-attend">✅ Attend</button>
+        <button class="response-btn btn-unsure" data-modal-response="unsure">⏳ Unsure</button>
+        <button class="response-btn btn-no" data-modal-response="not-attend">❌ No</button>
+        <button class="response-btn btn-na" data-modal-response="no-answer">📵 NA</button>
+      </div>
+      <textarea id="modalNotesInput" style="width:100%;min-height:54px;padding:10px;background:rgba(255,255,255,0.04);border:1px solid var(--border-subtle);border-radius:10px;color:#fff;font-family:inherit;font-size:0.85rem;margin-bottom:12px;outline:none;" placeholder="Notes or callback details..."></textarea>
+      <div class="m-submit-strip">
+        <button class="m-submit-btn" id="modalSubmitBtn">✓ Save Response</button>
+        <button class="m-skip-btn" id="modalCancelBtn">Cancel</button>
+      </div>
+    </div>
+  </div>
 
+  <!-- FLYER LIGHTBOX MODAL -->
+  <div class="flyer-modal-overlay" id="flyerModal">
+    <div class="flyer-modal-content">
+      <img src="flier.jpg" alt="Awakening: Breakthrough &amp; Spiritual Renewal">
+      <div class="flyer-modal-footer">
+        <span>Awakening 2026 – Harvesters Birmingham</span>
+        <button class="flyer-close-btn" id="flyerCloseBtn">✕ Close</button>
+      </div>
+    </div>
+  </div>
 
-<!-- Loading Overlay -->
-<div class="loading-overlay" id="loadingOverlay">
-  <div style="text-align:center">
-    <div class="loading-spinner"></div>
-    <p id="loadingText">Loading...</p>
+  <!-- TOAST NOTIFICATION -->
+  <div class="toast" id="toast"></div>
+
+  <!-- LOADING OVERLAY -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div style="text-align:center">
+      <div class="loading-spinner"></div>
+      <p id="loadingText">Loading...</p>
+    </div>
   </div>
 </div>
 
