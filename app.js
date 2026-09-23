@@ -470,33 +470,48 @@ function getStatusBadgeHtml(status) {
 
 // ===== DASHBOARD RENDERING =====
 async function renderDashboard() {
+  // If we already have cached dashboard data, render it immediately in 0ms!
+  if (APP._cachedDashboard) {
+    renderStats(APP._cachedDashboard.stats || {});
+    renderDonut(APP._cachedDashboard.stats || {});
+    renderLeaderboard(APP._cachedDashboard.callers || {});
+    renderCallLog(APP._cachedDashboard.log || []);
+  }
+
   if (!API_URL) {
-    // Local demo / preview fallback
-    const stats = {
-      total: APP.totalContacts || 1816,
-      called: APP.calledCount || 142,
-      pending: Math.max(0, (APP.totalContacts || 1816) - (APP.calledCount || 142)),
-      willAttend: 58,
-      unsure: 34,
-      notAttend: 26,
-      noAnswer: 24
-    };
-    const callers = {
-      'Volunteer Demo': { total: 42, willAttend: 22, unsure: 10, notAttend: 6, noAnswer: 4 },
-      'Sister Mary': { total: 38, willAttend: 18, unsure: 8, notAttend: 8, noAnswer: 4 },
-      'Brother John': { total: 34, willAttend: 12, unsure: 10, notAttend: 8, noAnswer: 4 },
-      'Deacon David': { total: 28, willAttend: 6, unsure: 6, notAttend: 4, noAnswer: 12 }
-    };
-    renderStats(stats);
-    renderDonut(stats);
-    renderLeaderboard(callers);
-    renderCallLog(APP._lastDashboardLog || []);
+    if (!APP._cachedDashboard) {
+      // Local demo / preview fallback
+      const stats = {
+        total: APP.totalContacts || 1816,
+        called: APP.calledCount || 142,
+        pending: Math.max(0, (APP.totalContacts || 1816) - (APP.calledCount || 142)),
+        willAttend: 58,
+        unsure: 34,
+        notAttend: 26,
+        noAnswer: 24
+      };
+      const callers = {
+        'Volunteer Demo': { total: 42, willAttend: 22, unsure: 10, notAttend: 6, noAnswer: 4 },
+        'Sister Mary': { total: 38, willAttend: 18, unsure: 8, notAttend: 8, noAnswer: 4 },
+        'Brother John': { total: 34, willAttend: 12, unsure: 10, notAttend: 8, noAnswer: 4 },
+        'Deacon David': { total: 28, willAttend: 6, unsure: 6, notAttend: 4, noAnswer: 12 }
+      };
+      renderStats(stats);
+      renderDonut(stats);
+      renderLeaderboard(callers);
+      renderCallLog(APP._lastDashboardLog || []);
+    }
     return;
   }
 
-  showLoading('Loading Awakening dashboard...');
+  // Only show a loading spinner on the first load if no cache exists
+  if (!APP._cachedDashboard) {
+    showLoading('Loading Awakening stats...');
+  }
+
   try {
     const data = await api({ action: 'dashboard' });
+    APP._cachedDashboard = data;
     APP._lastDashboardLog = data.log || [];
     renderStats(data.stats || {});
     renderDonut(data.stats || {});
@@ -504,7 +519,7 @@ async function renderDashboard() {
     renderCallLog(data.log || []);
   } catch (e) {
     console.error('Dashboard error:', e);
-    showToast('⚠️ Failed to load dashboard');
+    if (!APP._cachedDashboard) showToast('⚠️ Failed to load dashboard');
   } finally {
     hideLoading();
   }
@@ -542,52 +557,60 @@ function renderDonut(stats) {
   const totalElem = $('totalCalled');
   if (totalElem) totalElem.textContent = total;
 
-  const canvas = $('donutCanvas');
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-  const dpr = window.devicePixelRatio || 1;
-  canvas.width = 140 * dpr;
-  canvas.height = 140 * dpr;
-  ctx.scale(dpr, dpr);
+  const wrap = $('donutSvgWrap');
+  if (wrap) {
+    const r = 54;
+    const c = 2 * Math.PI * r; // ~339.292
+    const strokeWidth = 16;
 
-  const cx = 70, cy = 70, radius = 50, lineWidth = 14;
-  const segments = [
-    { value: willAttend, color: '#10b981' },
-    { value: unsure, color: '#f59e0b' },
-    { value: notAttend, color: '#ef4444' },
-    { value: noAnswer, color: '#6366f1' }
-  ];
+    if (total === 0) {
+      wrap.innerHTML = `
+        <svg class="m-donut-svg" viewBox="0 0 140 140">
+          <circle cx="70" cy="70" r="${r}" fill="none" stroke="rgba(255, 255, 255, 0.08)" stroke-width="${strokeWidth}" />
+        </svg>
+      `;
+    } else {
+      const segments = [
+        { value: willAttend, color: '#10b981' },
+        { value: unsure, color: '#f59e0b' },
+        { value: notAttend, color: '#ef4444' },
+        { value: noAnswer, color: '#6366f1' }
+      ];
 
-  ctx.clearRect(0, 0, 140, 140);
+      let currentOffset = 0;
+      let circlesHtml = `
+        <circle cx="70" cy="70" r="${r}" fill="none" stroke="rgba(255, 255, 255, 0.04)" stroke-width="${strokeWidth}" />
+      `;
 
-  if (total === 0) {
-    ctx.beginPath();
-    ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-    ctx.strokeStyle = 'rgba(255,255,255,0.08)';
-    ctx.lineWidth = lineWidth;
-    ctx.stroke();
-  } else {
-    let startAngle = -Math.PI / 2;
-    segments.forEach(d => {
-      if (d.value === 0) return;
-      const sweep = (d.value / total) * Math.PI * 2;
-      ctx.beginPath();
-      ctx.arc(cx, cy, radius, startAngle, startAngle + sweep);
-      ctx.strokeStyle = d.color;
-      ctx.lineWidth = lineWidth;
-      ctx.lineCap = 'round';
-      ctx.stroke();
-      startAngle += sweep;
-    });
+      segments.forEach(seg => {
+        if (seg.value <= 0) return;
+        const dashLength = (seg.value / total) * c;
+        const gapLength = c - dashLength;
+        circlesHtml += `
+          <circle
+            cx="70" cy="70" r="${r}"
+            fill="none"
+            stroke="${seg.color}"
+            stroke-width="${strokeWidth}"
+            stroke-dasharray="${dashLength.toFixed(2)} ${gapLength.toFixed(2)}"
+            stroke-dashoffset="${(-currentOffset).toFixed(2)}"
+            stroke-linecap="round"
+          />
+        `;
+        currentOffset += dashLength;
+      });
+
+      wrap.innerHTML = `<svg class="m-donut-svg" viewBox="0 0 140 140">${circlesHtml}</svg>`;
+    }
   }
 
   const legend = $('chartLegend');
   if (legend) {
     legend.innerHTML = `
-      <div class="legend-item"><span class="legend-dot" style="background:#10b981"></span>Will Attend<span class="legend-value">${willAttend}</span></div>
-      <div class="legend-item"><span class="legend-dot" style="background:#f59e0b"></span>Unsure<span class="legend-value">${unsure}</span></div>
-      <div class="legend-item"><span class="legend-dot" style="background:#ef4444"></span>Not Attend<span class="legend-value">${notAttend}</span></div>
-      <div class="legend-item"><span class="legend-dot" style="background:#6366f1"></span>No Answer<span class="legend-value">${noAnswer}</span></div>
+      <div class="m-legend-item"><span class="m-dot" style="background:#10b981"></span><span class="m-legend-label">Will Attend</span><span class="m-val">${willAttend}</span></div>
+      <div class="m-legend-item"><span class="m-dot" style="background:#f59e0b"></span><span class="m-legend-label">Unsure</span><span class="m-val">${unsure}</span></div>
+      <div class="m-legend-item"><span class="m-dot" style="background:#ef4444"></span><span class="m-legend-label">Not Attend</span><span class="m-val">${notAttend}</span></div>
+      <div class="m-legend-item"><span class="m-dot" style="background:#6366f1"></span><span class="m-legend-label">No Answer</span><span class="m-val">${noAnswer}</span></div>
     `;
   }
 }
@@ -981,10 +1004,23 @@ function setupEvents() {
     });
   });
 
+// ===== FIND NEXT UNCALLED CONTACT (Optimistic Finder - Bottom Up) =====
+function findNextUncalledContact(excludeId) {
+  if (!APP.contacts || APP.contacts.length === 0) return null;
+  // Prioritize from the bottom of the sheet upwards (highest row / newest first)
+  for (let i = APP.contacts.length - 1; i >= 0; i--) {
+    const c = APP.contacts[i];
+    if (c.id !== excludeId && !c.status) {
+      return c;
+    }
+  }
+  return null;
+}
+
   // ──── SUBMIT & NEXT ────
   const submitBtn = $('submitBtn');
   if (submitBtn) {
-    submitBtn.addEventListener('click', async () => {
+    submitBtn.addEventListener('click', () => {
       if (!APP.selectedResponse || !APP.currentContact) return;
 
       const contact = APP.currentContact;
@@ -998,65 +1034,46 @@ function setupEvents() {
         notes = notes ? (prayerText + ' | ' + notes) : prayerText;
       }
 
-      // Offline / Demo Mode Local Handling
-      if (!API_URL) {
-        const idx = APP.contacts.findIndex(c => c.id === contact.id);
-        if (idx >= 0) {
-          APP.contacts[idx].status = response;
-          APP.contacts[idx].calledBy = APP.currentCaller || 'Volunteer Demo';
-          APP.contacts[idx].notes = notes;
-          APP.contacts[idx].calledAt = new Date().toISOString();
-        }
-        APP.calledCount = (APP.calledCount || 0) + 1;
-        const nextContact = APP.contacts.find(c => !c.status) || null;
-        APP.currentContact = nextContact;
-        APP.selectedResponse = null;
-
-        const emojis = { 'will-attend': '✅', 'unsure': '⏳', 'not-attend': '❌', 'no-answer': '📵' };
-        showToast((emojis[response] || '✓') + ' Saved response for ' + contact.name);
-
-        renderContactCard();
-        renderProgress();
-        return;
+      // 1. OPTIMISTIC INSTANT UPDATE (0ms latency - NO freezing spinner!)
+      const idx = APP.contacts.findIndex(c => c.id === contact.id);
+      if (idx >= 0) {
+        APP.contacts[idx].status = response;
+        APP.contacts[idx].calledBy = APP.currentCaller;
+        APP.contacts[idx].notes = notes;
+        APP.contacts[idx].calledAt = new Date().toISOString();
       }
+      APP.calledCount = (APP.calledCount || 0) + 1;
 
-      showLoading('Saving Awakening response...');
-      try {
-        const result = await api({
+      // Find next uncalled contact from bottom upwards immediately
+      const nextContact = findNextUncalledContact(contact.id);
+      APP.currentContact = nextContact;
+      APP.selectedResponse = null;
+
+      const emojis = { 'will-attend': '✅', 'unsure': '⏳', 'not-attend': '❌', 'no-answer': '📵' };
+      showToast((emojis[response] || '✓') + ' Saved response for ' + contact.name, 1600);
+
+      // Render next contact card immediately without ANY waiting!
+      renderContactCard();
+      renderProgress();
+
+      // 2. Background async save to Google Sheets (non-blocking)
+      if (API_URL) {
+        api({
           action: 'submit_next',
           row: contact.row,
           status: response,
           caller: APP.currentCaller,
           notes: notes,
           timestamp: new Date().toISOString()
+        }).then(result => {
+          if (result && result.stats) {
+            APP.totalContacts = result.stats.total;
+            APP.calledCount = result.stats.called;
+            renderProgress();
+          }
+        }).catch(err => {
+          console.warn('Background save sync warning:', err);
         });
-
-        // Update local cache
-        const idx = APP.contacts.findIndex(c => c.id === contact.id);
-        if (idx >= 0) {
-          APP.contacts[idx].status = response;
-          APP.contacts[idx].calledBy = APP.currentCaller;
-          APP.contacts[idx].notes = notes;
-          APP.contacts[idx].calledAt = new Date().toISOString();
-        }
-
-        APP.currentContact = result.next || null;
-        if (result.stats) {
-          APP.totalContacts = result.stats.total;
-          APP.calledCount = result.stats.called;
-        }
-        APP.selectedResponse = null;
-
-        const emojis = { 'will-attend': '✅', 'unsure': '⏳', 'not-attend': '❌', 'no-answer': '📵' };
-        showToast((emojis[response] || '✓') + ' Saved response for ' + contact.name);
-
-        renderContactCard();
-        renderProgress();
-      } catch (err) {
-        showToast('⚠️ Failed to save. Please try again.');
-        console.error('Submit error:', err);
-      } finally {
-        hideLoading();
       }
     });
   }
@@ -1064,61 +1081,45 @@ function setupEvents() {
   // ──── SKIP ────
   const skipBtn = $('skipBtn');
   if (skipBtn) {
-    skipBtn.addEventListener('click', async () => {
+    skipBtn.addEventListener('click', () => {
       if (!APP.currentContact) return;
 
       const contact = APP.currentContact;
 
-      // Offline / Demo Mode Local Handling
-      if (!API_URL) {
-        const idx = APP.contacts.findIndex(c => c.id === contact.id);
-        if (idx >= 0) {
-          APP.contacts[idx].status = 'no-answer';
-          APP.contacts[idx].calledBy = APP.currentCaller || 'Volunteer Demo';
-          APP.contacts[idx].notes = 'Skipped - will retry later';
-          APP.contacts[idx].calledAt = new Date().toISOString();
-        }
-        const nextContact = APP.contacts.find(c => !c.status) || null;
-        APP.currentContact = nextContact;
-        showToast('⏭️ Contact skipped for later');
-        renderContactCard();
-        renderProgress();
-        return;
+      // 1. OPTIMISTIC INSTANT ADVANCE (0ms latency!)
+      const idx = APP.contacts.findIndex(c => c.id === contact.id);
+      if (idx >= 0) {
+        APP.contacts[idx].status = 'no-answer';
+        APP.contacts[idx].calledBy = APP.currentCaller;
+        APP.contacts[idx].notes = 'Skipped - will retry later';
+        APP.contacts[idx].calledAt = new Date().toISOString();
       }
 
-      showLoading('Skipping contact...');
-      try {
-        const result = await api({
+      const nextContact = findNextUncalledContact(contact.id);
+      APP.currentContact = nextContact;
+
+      showToast('⏭️ Contact skipped for later', 1400);
+      renderContactCard();
+      renderProgress();
+
+      // 2. Background async skip to Google Sheets
+      if (API_URL) {
+        api({
           action: 'submit_next',
           row: contact.row,
           status: 'no-answer',
           caller: APP.currentCaller,
           notes: 'Skipped - will retry later',
           timestamp: new Date().toISOString()
+        }).then(result => {
+          if (result && result.stats) {
+            APP.totalContacts = result.stats.total;
+            APP.calledCount = result.stats.called;
+            renderProgress();
+          }
+        }).catch(err => {
+          console.warn('Background skip sync warning:', err);
         });
-
-        const idx = APP.contacts.findIndex(c => c.id === contact.id);
-        if (idx >= 0) {
-          APP.contacts[idx].status = 'no-answer';
-          APP.contacts[idx].calledBy = APP.currentCaller;
-          APP.contacts[idx].notes = 'Skipped - will retry later';
-          APP.contacts[idx].calledAt = new Date().toISOString();
-        }
-
-        APP.currentContact = result.next || null;
-        if (result.stats) {
-          APP.totalContacts = result.stats.total;
-          APP.calledCount = result.stats.called;
-        }
-
-        showToast('⏭️ Contact skipped for later');
-        renderContactCard();
-        renderProgress();
-      } catch (err) {
-        showToast('⚠️ Skip failed. Please try again.');
-        console.error('Skip error:', err);
-      } finally {
-        hideLoading();
       }
     });
   }

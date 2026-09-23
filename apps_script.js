@@ -216,11 +216,13 @@ function handleSubmitAndNext(p) {
     var row   = parseInt(p.row, 10);
     if (!row || row < 2) return jsonResp({ error: 'Invalid row' });
 
-    // 1. Write the response
-    sheet.getRange(row, COL_STATUS).setValue(p.status);
-    sheet.getRange(row, COL_CALLER).setValue(p.caller);
-    sheet.getRange(row, COL_NOTES).setValue(p.notes || '');
-    sheet.getRange(row, COL_TIME).setValue(p.timestamp || new Date().toISOString());
+    // 1. Write the response atomically in one call (4x faster)
+    sheet.getRange(row, COL_STATUS, 1, 4).setValues([[
+      p.status,
+      p.caller,
+      p.notes || '',
+      p.timestamp || new Date().toISOString()
+    ]]);
 
     // 2. Re-read data and find next contact from the BOTTOM of the sheet upwards
     SpreadsheetApp.flush();
