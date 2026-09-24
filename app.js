@@ -1004,23 +1004,10 @@ function setupEvents() {
     });
   });
 
-// ===== FIND NEXT UNCALLED CONTACT (Optimistic Finder - Bottom Up) =====
-function findNextUncalledContact(excludeId) {
-  if (!APP.contacts || APP.contacts.length === 0) return null;
-  // Prioritize from the bottom of the sheet upwards (highest row / newest first)
-  for (let i = APP.contacts.length - 1; i >= 0; i--) {
-    const c = APP.contacts[i];
-    if (c.id !== excludeId && !c.status) {
-      return c;
-    }
-  }
-  return null;
-}
-
   // ──── SUBMIT & NEXT ────
   const submitBtn = $('submitBtn');
   if (submitBtn) {
-    submitBtn.addEventListener('click', () => {
+    submitBtn.addEventListener('click', async () => {
       if (!APP.selectedResponse || !APP.currentContact) return;
 
       const contact = APP.currentContact;
@@ -1034,46 +1021,68 @@ function findNextUncalledContact(excludeId) {
         notes = notes ? (prayerText + ' | ' + notes) : prayerText;
       }
 
-      // 1. OPTIMISTIC INSTANT UPDATE (0ms latency - NO freezing spinner!)
-      const idx = APP.contacts.findIndex(c => c.id === contact.id);
-      if (idx >= 0) {
-        APP.contacts[idx].status = response;
-        APP.contacts[idx].calledBy = APP.currentCaller;
-        APP.contacts[idx].notes = notes;
-        APP.contacts[idx].calledAt = new Date().toISOString();
+      // Offline / Demo Mode Local Handling
+      if (!API_URL) {
+        const idx = APP.contacts.findIndex(c => c.id === contact.id);
+        if (idx >= 0) {
+          APP.contacts[idx].status = response;
+          APP.contacts[idx].calledBy = APP.currentCaller || 'Volunteer Demo';
+          APP.contacts[idx].notes = notes;
+          APP.contacts[idx].calledAt = new Date().toISOString();
+        }
+        APP.calledCount = (APP.calledCount || 0) + 1;
+        const nextContact = APP.contacts.find(c => !c.status) || null;
+        APP.currentContact = nextContact;
+        APP.selectedResponse = null;
+
+        const emojis = { 'will-attend': '✅', 'unsure': '⏳', 'not-attend': '❌', 'no-answer': '📵' };
+        showToast((emojis[response] || '✓') + ' Saved response for ' + contact.name);
+
+        renderContactCard();
+        renderProgress();
+        return;
       }
-      APP.calledCount = (APP.calledCount || 0) + 1;
 
-      // Find next uncalled contact from bottom upwards immediately
-      const nextContact = findNextUncalledContact(contact.id);
-      APP.currentContact = nextContact;
-      APP.selectedResponse = null;
-
-      const emojis = { 'will-attend': '✅', 'unsure': '⏳', 'not-attend': '❌', 'no-answer': '📵' };
-      showToast((emojis[response] || '✓') + ' Saved response for ' + contact.name, 1600);
-
-      // Render next contact card immediately without ANY waiting!
-      renderContactCard();
-      renderProgress();
-
-      // 2. Background async save to Google Sheets (non-blocking)
-      if (API_URL) {
-        api({
+      // Synchronous server claim via Google Sheets LockService
+      // Guarantees no two agents are ever assigned the same contact!
+      showLoading('Saving & getting next contact...');
+      try {
+        const result = await api({
           action: 'submit_next',
           row: contact.row,
           status: response,
           caller: APP.currentCaller,
           notes: notes,
           timestamp: new Date().toISOString()
-        }).then(result => {
-          if (result && result.stats) {
-            APP.totalContacts = result.stats.total;
-            APP.calledCount = result.stats.called;
-            renderProgress();
-          }
-        }).catch(err => {
-          console.warn('Background save sync warning:', err);
         });
+
+        // Update local cache if available
+        const idx = APP.contacts.findIndex(c => c.id === contact.id);
+        if (idx >= 0) {
+          APP.contacts[idx].status = response;
+          APP.contacts[idx].calledBy = APP.currentCaller;
+          APP.contacts[idx].notes = notes;
+          APP.contacts[idx].calledAt = new Date().toISOString();
+        }
+
+        // Exclusively assign the contact claimed and locked by Google Sheets
+        APP.currentContact = result.next || null;
+        if (result.stats) {
+          APP.totalContacts = result.stats.total;
+          APP.calledCount = result.stats.called;
+        }
+        APP.selectedResponse = null;
+
+        const emojis = { 'will-attend': '✅', 'unsure': '⏳', 'not-attend': '❌', 'no-answer': '📵' };
+        showToast((emojis[response] || '✓') + ' Saved response for ' + contact.name);
+
+        renderContactCard();
+        renderProgress();
+      } catch (err) {
+        showToast('⚠️ Failed to save. Please try again.');
+        console.error('Submit error:', err);
+      } finally {
+        hideLoading();
       }
     });
   }
@@ -1081,45 +1090,62 @@ function findNextUncalledContact(excludeId) {
   // ──── SKIP ────
   const skipBtn = $('skipBtn');
   if (skipBtn) {
-    skipBtn.addEventListener('click', () => {
+    skipBtn.addEventListener('click', async () => {
       if (!APP.currentContact) return;
 
       const contact = APP.currentContact;
 
-      // 1. OPTIMISTIC INSTANT ADVANCE (0ms latency!)
-      const idx = APP.contacts.findIndex(c => c.id === contact.id);
-      if (idx >= 0) {
-        APP.contacts[idx].status = 'no-answer';
-        APP.contacts[idx].calledBy = APP.currentCaller;
-        APP.contacts[idx].notes = 'Skipped - will retry later';
-        APP.contacts[idx].calledAt = new Date().toISOString();
+      // Offline / Demo Mode Local Handling
+      if (!API_URL) {
+        const idx = APP.contacts.findIndex(c => c.id === contact.id);
+        if (idx >= 0) {
+          APP.contacts[idx].status = 'no-answer';
+          APP.contacts[idx].calledBy = APP.currentCaller || 'Volunteer Demo';
+          APP.contacts[idx].notes = 'Skipped - will retry later';
+          APP.contacts[idx].calledAt = new Date().toISOString();
+        }
+        const nextContact = APP.contacts.find(c => !c.status) || null;
+        APP.currentContact = nextContact;
+        showToast('⏭️ Contact skipped for later');
+        renderContactCard();
+        renderProgress();
+        return;
       }
 
-      const nextContact = findNextUncalledContact(contact.id);
-      APP.currentContact = nextContact;
-
-      showToast('⏭️ Contact skipped for later', 1400);
-      renderContactCard();
-      renderProgress();
-
-      // 2. Background async skip to Google Sheets
-      if (API_URL) {
-        api({
+      showLoading('Skipping & claiming next contact...');
+      try {
+        const result = await api({
           action: 'submit_next',
           row: contact.row,
           status: 'no-answer',
           caller: APP.currentCaller,
           notes: 'Skipped - will retry later',
           timestamp: new Date().toISOString()
-        }).then(result => {
-          if (result && result.stats) {
-            APP.totalContacts = result.stats.total;
-            APP.calledCount = result.stats.called;
-            renderProgress();
-          }
-        }).catch(err => {
-          console.warn('Background skip sync warning:', err);
         });
+
+        const idx = APP.contacts.findIndex(c => c.id === contact.id);
+        if (idx >= 0) {
+          APP.contacts[idx].status = 'no-answer';
+          APP.contacts[idx].calledBy = APP.currentCaller;
+          APP.contacts[idx].notes = 'Skipped - will retry later';
+          APP.contacts[idx].calledAt = new Date().toISOString();
+        }
+
+        // Exclusively assign the contact claimed and locked by Google Sheets
+        APP.currentContact = result.next || null;
+        if (result.stats) {
+          APP.totalContacts = result.stats.total;
+          APP.calledCount = result.stats.called;
+        }
+
+        showToast('⏭️ Contact skipped for later');
+        renderContactCard();
+        renderProgress();
+      } catch (err) {
+        showToast('⚠️ Skip failed. Please try again.');
+        console.error('Skip error:', err);
+      } finally {
+        hideLoading();
       }
     });
   }
