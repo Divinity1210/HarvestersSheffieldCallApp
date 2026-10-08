@@ -7,8 +7,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#090910">
   <meta name="format-detection" content="telephone=no">
-  <title>Harvesters Birmingham – Awakening Call Campaign</title>
-  <meta name="description" content="Harvesters Birmingham mobile volunteer outreach app for Awakening: Breakthrough & Spiritual Renewal">
+  <title>Harvesters Birmingham – Member Outreach &amp; Calling App</title>
+  <meta name="description" content="Harvesters Birmingham mobile outreach and member calling app for weekly follow-up and special events">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -367,6 +367,69 @@
       background: linear-gradient(90deg, #ef4444, #ff8a00, #ffb800);
       border-radius: 10px;
       transition: width 0.4s ease;
+    }
+
+    /* ===== CAMPAIGN BANNER CARD (DYNAMIC SCRIPT & EVENT MANAGER) ===== */
+    .campaign-banner-card {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.14) 0%, rgba(139, 92, 246, 0.12) 100%);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    }
+    .campaign-banner-left {
+      min-width: 0;
+      flex: 1;
+    }
+    .campaign-badge-label {
+      font-size: 0.64rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent-gold);
+      margin-bottom: 2px;
+    }
+    .campaign-active-title {
+      font-size: 0.98rem;
+      font-weight: 900;
+      color: #fff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .campaign-active-theme {
+      font-size: 0.72rem;
+      color: var(--text-secondary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-top: 2px;
+    }
+    .btn-campaign-manage {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border-subtle);
+      color: #fff;
+      padding: 7px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 0.74rem;
+      font-weight: 800;
+      cursor: pointer;
+      font-family: inherit;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+      transition: var(--transition);
+    }
+    .btn-campaign-manage:hover {
+      background: rgba(255, 184, 0, 0.18);
+      border-color: var(--accent-gold);
+      color: var(--accent-gold);
     }
 
     /* ===== HERO CONTACT CARD (MOBILE) ===== */
@@ -1341,6 +1404,138 @@
       text-transform: uppercase;
     }
 
+    /* Modal Tabs (Campaign Manager) */
+    .modal-tab-bar {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .modal-tab-btn {
+      height: 38px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      border-radius: var(--radius-sm);
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      transition: var(--transition);
+    }
+    .modal-tab-btn.active {
+      background: rgba(245, 158, 11, 0.2);
+      border-color: var(--accent-gold);
+      color: #fff;
+    }
+
+    /* Form Fields for Campaign Editor */
+    .form-group {
+      margin-bottom: 12px;
+    }
+    .form-label {
+      font-size: 0.72rem;
+      font-weight: 800;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 4px;
+      display: block;
+    }
+    .form-control {
+      width: 100%;
+      height: 42px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 0 12px;
+      color: #fff;
+      font-size: 0.86rem;
+      font-family: inherit;
+      outline: none;
+    }
+    .form-control:focus {
+      border-color: var(--accent-gold);
+    }
+    .form-textarea {
+      width: 100%;
+      min-height: 64px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 8px 12px;
+      color: #fff;
+      font-size: 0.82rem;
+      font-family: inherit;
+      outline: none;
+      resize: vertical;
+    }
+    .form-textarea:focus {
+      border-color: var(--accent-gold);
+    }
+
+    /* Opt-Out / Do Not Call Trigger */
+    .btn-optout-trigger {
+      width: 100%;
+      background: rgba(239, 68, 68, 0.08);
+      border: 1px dashed rgba(239, 68, 68, 0.35);
+      color: #f87171;
+      padding: 9px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 0.76rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: var(--transition);
+      margin-top: 10px;
+    }
+    .btn-optout-trigger:hover {
+      background: rgba(239, 68, 68, 0.16);
+      border-color: #ef4444;
+      color: #fff;
+    }
+
+    /* Stats Campaign Select */
+    .m-stats-campaign-filter {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      margin-bottom: 14px;
+    }
+    .m-stats-campaign-label {
+      font-size: 0.74rem;
+      font-weight: 800;
+      color: var(--accent-gold);
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .m-campaign-select {
+      flex: 1;
+      height: 36px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border-focus);
+      border-radius: var(--radius-xs);
+      color: #fff;
+      font-family: inherit;
+      font-size: 0.82rem;
+      font-weight: 700;
+      padding: 0 10px;
+      outline: none;
+      cursor: pointer;
+    }
+    .m-campaign-select option {
+      background: #12101b;
+      color: #fff;
+    }
+
     /* ===== FLYER LIGHTBOX ===== */
     .flyer-modal-overlay {
       position: fixed;
@@ -1516,6 +1711,20 @@
           <div class="mini-progress-fill" id="progressFill"></div>
         </div>
 
+        <!-- DYNAMIC CAMPAIGN BANNER CARD -->
+        <div class="campaign-banner-card" id="campaignBanner">
+          <div class="campaign-banner-left">
+            <div class="campaign-badge-label">Active Campaign</div>
+            <div class="campaign-active-title" id="activeCampaignName">Sunday Celebration Service</div>
+            <div class="campaign-active-theme" id="activeCampaignTheme">Worship, Word &amp; Miracles · Park Regis</div>
+          </div>
+          <div class="campaign-banner-right">
+            <button type="button" class="btn-campaign-manage" id="openCampaignModalBtn">
+              ⚙️ Change / Edit Script
+            </button>
+          </div>
+        </div>
+
         <!-- Hero Contact Card -->
         <div id="contactArea">
           <!-- Populated by JS -->
@@ -1524,43 +1733,38 @@
         <!-- Mobile Optimized Call Script -->
         <div class="m-script-card">
           <div class="m-script-header" id="scriptToggle">
-            <span class="m-script-title">📋 Call Script (Awakening)</span>
+            <span class="m-script-title" id="scriptTitleHeader">📋 Call Script (Sunday Celebration Service)</span>
             <span class="m-chevron open" id="scriptChevron">▼</span>
           </div>
           <div class="m-script-body expanded" id="scriptBody">
             <!-- Step 1: Greeting -->
             <div class="speech-bubble">
               <div class="speech-label">1. Introduction</div>
-              <p>"Hello, may I speak with <span class="highlight-name" id="scriptContactName">[Name]</span>?"</p>
-              <p style="margin-top:6px;">"Hi <span class="highlight-name" id="scriptContactFirstName">[Name]</span>, my name is <strong id="scriptCallerName">[Your Name]</strong>, and I’m calling from <strong>Harvesters Birmingham</strong>. I hope you’re doing well."</p>
-              <p style="margin-top:6px;">"I’m calling to specially invite you to <strong>Awakening</strong>, our two day gathering focused on breakthrough and spiritual renewal. It’s going to be a powerful time of prayer, worship and the word, and we would really love for you to be part of it."</p>
+              <p id="scriptGreetingText">"Hello, may I speak with <span class="highlight-name" id="scriptContactName">[Name]</span>?"</p>
+              <p style="margin-top:6px;" id="scriptIntroBody">"Hi <span class="highlight-name" id="scriptContactFirstName">[Name]</span>, my name is <strong id="scriptCallerName">[Your Name]</strong>, and I’m calling from <strong>Harvesters Birmingham</strong>. I hope you’re having a blessed week!"</p>
             </div>
 
             <!-- Event Details Pill Grid -->
             <div class="m-event-grid">
               <div class="m-event-pill full-width">
                 <span class="m-event-pill-label">📍 Venue</span>
-                <span class="m-event-pill-val">Park Regis, 160 Broad St, Birmingham B15 1DT</span>
-                <a href="https://maps.google.com/?q=Park+Regis+160+Broad+St+Birmingham+B15+1DT" target="_blank" rel="noopener" class="m-map-btn">🗺️ Open in Google Maps →</a>
+                <span class="m-event-pill-val" id="scriptVenueText">Park Regis, 160 Broad St, Birmingham B15 1DT</span>
+                <a href="https://maps.google.com/?q=Park+Regis+160+Broad+St+Birmingham+B15+1DT" target="_blank" rel="noopener" class="m-map-btn" id="scriptMapBtn">🗺️ Open in Google Maps →</a>
               </div>
               <div class="m-event-pill">
-                <span class="m-event-pill-label">🗓️ Dates</span>
-                <span class="m-event-pill-val">Sat 26th &amp; Sun 27th Sept</span>
+                <span class="m-event-pill-label">🗓️ Date &amp; Time</span>
+                <span class="m-event-pill-val" id="scriptDateTimeText">Every Sunday · 10:00 AM</span>
               </div>
               <div class="m-event-pill">
-                <span class="m-event-pill-label">🕙 Time</span>
-                <span class="m-event-pill-val">09:00am - 03:00pm</span>
-              </div>
-              <div class="m-event-pill full-width">
                 <span class="m-event-pill-label">🚗 Parking</span>
-                <span class="m-event-pill-val">Free parking and on-street parking available</span>
+                <span class="m-event-pill-val" id="scriptParkingText">Free &amp; on-street parking available</span>
               </div>
             </div>
 
             <!-- Step 2: Engage -->
             <div class="speech-bubble" style="border-color: rgba(255, 184, 0, 0.35);">
               <div class="speech-label">2. Engage (The Ask)</div>
-              <p style="font-size: 0.98rem; font-weight: 800; color: #fff;">"Will you be able to join us?"</p>
+              <p style="font-size: 0.98rem; font-weight: 800; color: #fff;" id="scriptTheAsk">"Will you be able to join us?"</p>
             </div>
 
             <!-- Interactive Script Branch Tabs -->
@@ -1570,17 +1774,17 @@
               <button class="m-branch-btn" data-branch="not-attend" onclick="selectScriptBranch('not-attend')">❌ If NO</button>
             </div>
 
-            <div class="m-branch-content branch-yes active-branch" data-branch="will-attend">
+            <div class="m-branch-content branch-yes active-branch" data-branch="will-attend" id="branchYesText">
               <strong>If they say YES:</strong><br>
               "That’s great! We look forward to welcoming you. Feel free to invite your family and friends too."
             </div>
 
-            <div class="m-branch-content branch-unsure" data-branch="unsure">
+            <div class="m-branch-content branch-unsure" data-branch="unsure" id="branchUnsureText">
               <strong>If they’re UNSURE:</strong><br>
-              "No problem at all. I just wanted to personally invite you and make sure you’re aware of it. We’d love to have you with us if you’re able to make it, even if it’s just for one day."
+              "No problem at all. I just wanted to personally invite you and make sure you’re aware of it. We’d love to have you with us if you’re able to make it."
             </div>
 
-            <div class="m-branch-content branch-no" data-branch="not-attend">
+            <div class="m-branch-content branch-no" data-branch="not-attend" id="branchNoText">
               <strong>If they say NO:</strong><br>
               "That’s absolutely fine. Thank you for your time, and we hope to welcome you at one of our upcoming services."
             </div>
@@ -1588,7 +1792,7 @@
             <!-- Step 3: Closing Blessing -->
             <div class="speech-bubble">
               <div class="speech-label">3. Closing Blessing</div>
-              <p>"Thank you for your time. Have a lovely day, and God bless you."</p>
+              <p id="scriptClosingText">"Thank you so much for your time. Have a lovely day, and God bless you."</p>
             </div>
           </div>
         </div>
@@ -1603,6 +1807,10 @@
             <button class="response-btn btn-no" data-response="not-attend">❌ Not Attend</button>
             <button class="response-btn btn-na" data-response="no-answer">📵 No Answer</button>
           </div>
+
+          <button type="button" class="btn-optout-trigger" id="optOutBtn">
+            🚫 Remove from Database (Do Not Call)
+          </button>
 
           <!-- Quick Tag Chips for Zero-Typing on Mobile -->
           <div class="m-quick-tags-wrap">
@@ -1641,6 +1849,14 @@
 
       <!-- SUB-SCREEN: DASHBOARD VIEW -->
       <section class="view-screen" id="dashboardView">
+        <!-- DYNAMIC CAMPAIGN STATS SELECTOR -->
+        <div class="m-stats-campaign-filter">
+          <span class="m-stats-campaign-label">📊 Campaign:</span>
+          <select id="statsCampaignSelect" class="m-campaign-select">
+            <option value="all">All Campaigns (Combined)</option>
+          </select>
+        </div>
+
         <div class="m-kpi-grid" id="statsGrid">
           <!-- Populated by JS -->
         </div>
@@ -1760,6 +1976,138 @@
       <div class="flyer-modal-footer">
         <span>Awakening 2026 – Harvesters Birmingham</span>
         <button class="flyer-close-btn" id="flyerCloseBtn">✕ Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DYNAMIC CAMPAIGN & SCRIPT MANAGER MODAL -->
+  <div class="m-sheet-overlay" id="campaignModal">
+    <div class="m-sheet-card" style="max-height:90vh;overflow-y:auto;">
+      <div class="m-sheet-drag-handle"></div>
+      <div class="m-sheet-header">
+        <div>
+          <h3>⚙️ Campaign &amp; Script Manager</h3>
+          <p style="font-size:0.74rem;color:var(--text-muted);margin-top:2px;">Switch campaigns and adapt call scripts anytime</p>
+        </div>
+        <button class="m-sheet-close" id="campaignModalClose">✕</button>
+      </div>
+
+      <div class="modal-tab-bar">
+        <button class="modal-tab-btn active" id="tabCampaignListBtn" onclick="switchCampaignTab('list')">🏷️ Select Campaign</button>
+        <button class="modal-tab-btn" id="tabCampaignEditBtn" onclick="switchCampaignTab('edit')">✏️ Edit Script &amp; Details</button>
+      </div>
+
+      <!-- Tab 1: Campaign Selector List -->
+      <div id="campaignListTab">
+        <div id="campaignCardsContainer" style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px;">
+          <!-- Populated by JS -->
+        </div>
+        <button type="button" class="btn-primary-mobile" onclick="startNewCampaign()" style="height:44px;font-size:0.88rem;">
+          + Create New Campaign
+        </button>
+      </div>
+
+      <!-- Tab 2: Edit Campaign & Script -->
+      <div id="campaignEditTab" style="display:none">
+        <form id="campaignEditForm">
+          <input type="hidden" id="editCampaignId">
+
+          <div class="form-group">
+            <label class="form-label">Campaign Name</label>
+            <input type="text" id="editCampaignName" class="form-control" placeholder="e.g. Sunday Celebration Service" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Theme / Subtitle</label>
+            <input type="text" id="editCampaignTheme" class="form-control" placeholder="e.g. Worship, Word &amp; Miracles">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Venue / Location</label>
+            <input type="text" id="editCampaignVenue" class="form-control" placeholder="e.g. Park Regis, 160 Broad St, Birmingham B15 1DT">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Date &amp; Time</label>
+            <input type="text" id="editCampaignDateTime" class="form-control" placeholder="e.g. Every Sunday · 10:00 AM">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Script Introduction (Tokens: {FirstName}, {CallerName})</label>
+            <textarea id="editScriptIntro" class="form-textarea" rows="3" placeholder="Hello, may I speak with {FirstName}? ..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">The Ask / Invitation Question</label>
+            <textarea id="editTheAsk" class="form-textarea" rows="2" placeholder="Will you and your family be able to join us?"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">If Member Says YES</label>
+            <textarea id="editBranchYes" class="form-textarea" rows="2"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">If Member is UNSURE</label>
+            <textarea id="editBranchUnsure" class="form-textarea" rows="2"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">If Member Says NO</label>
+            <textarea id="editBranchNo" class="form-textarea" rows="2"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Closing Blessing</label>
+            <textarea id="editClosing" class="form-textarea" rows="2"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">WhatsApp Follow-up Message Template (Tokens: {FirstName}, {CallerName}, {Venue}, {DateTime})</label>
+            <textarea id="editWhatsAppTemplate" class="form-textarea" rows="4"></textarea>
+          </div>
+
+          <div class="m-submit-strip" style="margin-top:14px;">
+            <button type="submit" class="m-submit-btn">💾 Save &amp; Apply Script</button>
+            <button type="button" class="m-skip-btn" onclick="switchCampaignTab('list')">Back</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- OPT-OUT / DO-NOT-CALL DELETION MODAL -->
+  <div class="m-sheet-overlay" id="optOutModal">
+    <div class="m-sheet-card">
+      <div class="m-sheet-drag-handle"></div>
+      <div class="m-sheet-header">
+        <div>
+          <h3 style="color:#ef4444;">🚫 Remove from Database</h3>
+          <p style="font-size:0.74rem;color:var(--text-muted);margin-top:2px;">Permanent Do-Not-Call Suppression</p>
+        </div>
+        <button class="m-sheet-close" id="optOutModalClose">✕</button>
+      </div>
+
+      <div style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:var(--radius-sm);padding:12px;margin-bottom:14px;color:#fca5a5;font-size:0.78rem;line-height:1.45;">
+        ⚠️ <strong>GDPR / Do Not Call Notice:</strong><br>
+        Confirming this action will immediately remove this member from the active calling sheet and add their number to the Do-Not-Call suppression list. <strong>Nobody will call them again across any campaign.</strong>
+      </div>
+
+      <div style="background:rgba(255,255,255,0.04);border:1px solid var(--border-subtle);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:14px;">
+        <div style="font-size:0.92rem;font-weight:900;color:#fff;" id="optOutContactName">Member Name</div>
+        <div style="font-size:0.76rem;color:var(--accent-gold);font-family:monospace;margin-top:3px;" id="optOutContactPhone">Phone Number</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Reason / Notes for Removal</label>
+        <input type="text" id="optOutReasonInput" class="form-control" value="Member requested to be taken off church database">
+      </div>
+
+      <div class="m-submit-strip">
+        <button type="button" class="m-submit-btn" id="confirmOptOutBtn" style="background:#ef4444;border-color:#dc2626;color:#fff;">
+          🗑️ Yes, Delete &amp; Never Call Again
+        </button>
+        <button type="button" class="m-skip-btn" id="cancelOptOutBtn">Cancel</button>
       </div>
     </div>
   </div>
