@@ -244,6 +244,32 @@ function getWhatsAppHref(phone, contactName) {
   return `https://wa.me/${digits}?text=${encodeURIComponent(text)}`;
 }
 
+function getSmsHref(phone, contactName) {
+  let digits = cleanDigits(phone);
+  if (!digits) return '#';
+  if (digits.startsWith('0')) {
+    digits = '+44' + digits.slice(1);
+  } else if (!digits.startsWith('+')) {
+    digits = '+' + digits;
+  }
+
+  const firstName = (contactName || 'Member').split(/\s+/)[0];
+  const callerName = APP.currentCaller || 'Harvesters Team';
+  const campaign = APP.activeCampaign || DEFAULT_CAMPAIGNS[0];
+
+  let text = campaign.whatsappTemplate || DEFAULT_CAMPAIGNS[0].whatsappTemplate;
+  text = text.replace(/{FirstName}/g, firstName)
+             .replace(/{CallerName}/g, callerName)
+             .replace(/{ChurchName}/g, 'Harvesters Croydon')
+             .replace(/{Venue}/g, campaign.venue || '')
+             .replace(/{DateTime}/g, campaign.dateTime || '');
+
+  const isIOS = /iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent) && !window.MSStream;
+  const separator = isIOS ? '&body=' : '?body=';
+  return `sms:${digits}${separator}${encodeURIComponent(text)}`;
+}
+
+
 function toggleReveal(phone) {
   const phoneDisplay = $('phoneDisplay');
   const revealBtn = $('revealBtn');
@@ -326,33 +352,34 @@ function selectActiveCampaign(campaignId) {
 }
 window.selectActiveCampaign = selectActiveCampaign;
 
-function renderActiveCampaign() {
+
+function renderScriptContent() {
   const campaign = APP.activeCampaign || DEFAULT_CAMPAIGNS[0];
+  const contact = APP.currentContact;
+  const firstName = contact ? (contact.firstName || (contact.name ? contact.name.split(/\s+/)[0] : 'Member')) : 'Member';
+  const fullName = contact ? (contact.name || firstName) : 'Member';
+  const callerName = APP.currentCaller || 'Harvesters Outreach Team';
 
-  // Update Top Banner
-  const bannerName = $('activeCampaignName');
-  if (bannerName) bannerName.textContent = campaign.name;
-  const bannerTheme = $('activeCampaignTheme');
-  if (bannerTheme) bannerTheme.textContent = `${campaign.theme || 'Church Outreach'} · ${campaign.venue || 'Croydon'}`;
+  const formatText = (text) => {
+    if (!text) return '';
+    return text
+      .replace(/{FirstName}/g, `<span class="highlight-name">${escapeHtml(firstName)}</span>`)
+      .replace(/{Name}/g, `<span class="highlight-name">${escapeHtml(fullName)}</span>`)
+      .replace(/{CallerName}/g, `<strong class="highlight-caller">${escapeHtml(callerName)}</strong>`)
+      .replace(/{ChurchName}/g, '<strong>Harvesters Croydon</strong>')
+      .replace(/{Venue}/g, escapeHtml(campaign.venue || 'The Legacy Centre, 14 Imperial Way, Croydon CR0 4RR'))
+      .replace(/{DateTime}/g, escapeHtml(campaign.dateTime || 'Every Sunday · 10:00 AM'));
+  };
 
-  // Update Script Header
-  const scriptTitle = $('scriptTitleHeader');
-  if (scriptTitle) scriptTitle.textContent = `📋 Call Script (${campaign.name})`;
-
-  // Update Script Content
   const scriptGreeting = $('scriptGreetingText');
-  if (scriptGreeting) scriptGreeting.innerHTML = `"Hello, may I speak with <span class="highlight-name" id="scriptContactName">[Name]</span>?"`;
+  if (scriptGreeting) {
+    scriptGreeting.innerHTML = `"Hello, may I speak with <span class="highlight-name" id="scriptContactName">${escapeHtml(firstName)}</span>?"`;
+  }
 
   const scriptIntro = $('scriptIntroBody');
   if (scriptIntro) {
-    const contact = APP.currentContact;
-    const firstName = contact ? (contact.firstName || 'Member') : '[Name]';
-    const callerName = APP.currentCaller || '[Your Name]';
-    let intro = campaign.scriptIntro || DEFAULT_CAMPAIGNS[0].scriptIntro;
-    intro = intro.replace(/{FirstName}/g, `<span class="highlight-name" id="scriptContactFirstName">${escapeHtml(firstName)}</span>`)
-                 .replace(/{CallerName}/g, `<strong id="scriptCallerName">${escapeHtml(callerName)}</strong>`)
-                 .replace(/{ChurchName}/g, '<strong>Harvesters Croydon</strong>');
-    scriptIntro.innerHTML = `"${intro}"`;
+    const rawIntro = campaign.scriptIntro || DEFAULT_CAMPAIGNS[0].scriptIntro;
+    scriptIntro.innerHTML = `"${formatText(rawIntro)}"`;
   }
 
   const scriptVenue = $('scriptVenueText');
@@ -368,19 +395,52 @@ function renderActiveCampaign() {
   if (scriptMapBtn) scriptMapBtn.href = campaign.mapUrl || `https://maps.google.com/?q=${encodeURIComponent(campaign.venue || 'Croydon')}`;
 
   const scriptTheAsk = $('scriptTheAsk');
-  if (scriptTheAsk) scriptTheAsk.textContent = `"${campaign.theAsk || DEFAULT_CAMPAIGNS[0].theAsk}"`;
+  if (scriptTheAsk) {
+    const rawAsk = campaign.theAsk || DEFAULT_CAMPAIGNS[0].theAsk;
+    scriptTheAsk.innerHTML = `"${formatText(rawAsk)}"`;
+  }
 
   const branchYes = $('branchYesText');
-  if (branchYes) branchYes.innerHTML = `<strong>If they say YES:</strong><br>"${escapeHtml(campaign.branchYes || DEFAULT_CAMPAIGNS[0].branchYes)}"`;
+  if (branchYes) {
+    const rawYes = campaign.branchYes || DEFAULT_CAMPAIGNS[0].branchYes;
+    branchYes.innerHTML = `<strong>If they say YES:</strong><br>"${formatText(rawYes)}"`;
+  }
 
   const branchUnsure = $('branchUnsureText');
-  if (branchUnsure) branchUnsure.innerHTML = `<strong>If they are UNSURE:</strong><br>"${escapeHtml(campaign.branchUnsure || DEFAULT_CAMPAIGNS[0].branchUnsure)}"`;
+  if (branchUnsure) {
+    const rawUnsure = campaign.branchUnsure || DEFAULT_CAMPAIGNS[0].branchUnsure;
+    branchUnsure.innerHTML = `<strong>If they are UNSURE:</strong><br>"${formatText(rawUnsure)}"`;
+  }
 
   const branchNo = $('branchNoText');
-  if (branchNo) branchNo.innerHTML = `<strong>If they say NO:</strong><br>"${escapeHtml(campaign.branchNo || DEFAULT_CAMPAIGNS[0].branchNo)}"`;
+  if (branchNo) {
+    const rawNo = campaign.branchNo || DEFAULT_CAMPAIGNS[0].branchNo;
+    branchNo.innerHTML = `<strong>If they say NO:</strong><br>"${formatText(rawNo)}"`;
+  }
 
   const scriptClosing = $('scriptClosingText');
-  if (scriptClosing) scriptClosing.textContent = `"${campaign.closing || DEFAULT_CAMPAIGNS[0].closing}"`;
+  if (scriptClosing) {
+    const rawClosing = campaign.closing || DEFAULT_CAMPAIGNS[0].closing;
+    scriptClosing.innerHTML = `"${formatText(rawClosing)}"`;
+  }
+}
+window.renderScriptContent = renderScriptContent;
+
+function renderActiveCampaign() {
+  const campaign = APP.activeCampaign || DEFAULT_CAMPAIGNS[0];
+
+  // Update Top Banner
+  const bannerName = $('activeCampaignName');
+  if (bannerName) bannerName.textContent = campaign.name;
+  const bannerTheme = $('activeCampaignTheme');
+  if (bannerTheme) bannerTheme.textContent = `${campaign.theme || 'Church Outreach'} · ${campaign.venue || 'Croydon'}`;
+
+  // Update Script Header
+  const scriptTitle = $('scriptTitleHeader');
+  if (scriptTitle) scriptTitle.textContent = `📋 Call Script (${campaign.name})`;
+
+  // Update Script Content Dynamically
+  renderScriptContent();
 
   const loggingTag = $('loggingCampaignTag');
   if (loggingTag) loggingTag.textContent = campaign.name;
@@ -565,7 +625,8 @@ function toggleQuickTag(tag) {
 
   // Update visual state of chips
   document.querySelectorAll('.m-tag-chip').forEach(chip => {
-    chip.classList.toggle('active', APP.selectedTags.has(chip.textContent.trim()));
+    const chipTag = (chip.dataset.tag || chip.textContent).trim();
+    chip.classList.toggle('active', APP.selectedTags.has(chipTag));
   });
 
   // Prayer card toggle
@@ -611,7 +672,7 @@ function showView(viewId) {
       btn.classList.toggle('active', btn.dataset.nav === targetSubView);
     });
 
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo(0, 0);
 
     if (targetSubView === 'dashboardView') {
       renderDashboard();
@@ -716,6 +777,7 @@ function renderContactCard() {
 
   const telHref = getTelHref(contact.phone);
   const waHref = getWhatsAppHref(contact.phone, fullName);
+  const smsHref = getSmsHref(contact.phone, fullName);
 
   area.innerHTML = `
     <div class="m-contact-card">
@@ -745,7 +807,12 @@ function renderContactCard() {
           <a href="${waHref}" target="_blank" rel="noopener" class="m-whatsapp-btn" id="waBtn">
             💬 WhatsApp Details
           </a>
-          <button class="m-copy-btn" onclick="copyPhone('${escapeHtml(contact.phone)}')">
+          <a href="${smsHref}" class="m-sms-btn" id="smsBtn">
+            ✉️ Send SMS
+          </a>
+        </div>
+        <div style="margin-top:8px;">
+          <button class="m-copy-btn" onclick="copyPhone('${escapeHtml(contact.phone)}')" style="width:100%;min-height:36px;font-size:0.75rem;">
             📋 Copy Number
           </button>
         </div>
@@ -753,11 +820,8 @@ function renderContactCard() {
     </div>
   `;
 
-  // Personalize script with member name
-  const scriptGreeting = $('scriptContactName');
-  if (scriptGreeting) scriptGreeting.textContent = fullName;
-  const scriptFirstName = $('scriptContactFirstName');
-  if (scriptFirstName) scriptFirstName.textContent = firstName;
+  // Personalize script with member name & caller details dynamically
+  renderScriptContent();
 
   if (responseArea) responseArea.style.display = 'block';
 }
@@ -917,23 +981,22 @@ async function renderDashboard() {
   const feedbackList = $('feedbackList');
   const logList = $('logList');
 
-  showLoading('Loading Croydon outreach analytics...');
-
   let dashboardData = null;
 
   if (APP.isLiveApi) {
+    showLoading('Loading Croydon outreach analytics...');
     try {
       dashboardData = await api({ action: 'dashboard' });
     } catch (err) {
       console.warn('API dashboard fetch failed, rendering local analytics:', err);
+    } finally {
+      hideLoading();
     }
   }
 
   if (!dashboardData) {
     dashboardData = buildLocalDashboardData();
   }
-
-  hideLoading();
 
   const stats = dashboardData.stats || {};
   APP._lastDashboardLog = dashboardData.log || [];
@@ -1480,6 +1543,7 @@ function setupEvents() {
       }
 
       hideLoading();
+      document.documentElement.classList.add('has-session');
       showView('mainView');
       renderCallerBar();
       renderActiveCampaign();
@@ -1494,6 +1558,7 @@ function setupEvents() {
     logoutBtn.addEventListener('click', () => {
       APP.currentCaller = null;
       localStorage.removeItem(STORAGE_KEY_CALLER);
+      document.documentElement.classList.remove('has-session');
       showView('loginView');
       showToast('Signed out');
     });
@@ -1570,6 +1635,61 @@ function setupEvents() {
     });
   }
 
+  // Quick Feedback Tag Chips click listeners
+  document.querySelectorAll('.m-tag-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const tag = (chip.dataset.tag || chip.textContent).trim();
+      toggleQuickTag(tag);
+    });
+  });
+
+  // Modal & Sheet Backdrop dismissals
+  const lookupSheet = $('lookupSheet');
+  if (lookupSheet) {
+    lookupSheet.addEventListener('click', (e) => {
+      if (e.target === lookupSheet) lookupSheet.classList.remove('active');
+    });
+  }
+
+  const lookupModalOverlay = $('lookupModalOverlay');
+  if (lookupModalOverlay) {
+    lookupModalOverlay.addEventListener('click', (e) => {
+      if (e.target === lookupModalOverlay) closeContactModal();
+    });
+  }
+
+  const campaignModal = $('campaignModal');
+  if (campaignModal) {
+    campaignModal.addEventListener('click', (e) => {
+      if (e.target === campaignModal) closeCampaignModal();
+    });
+  }
+
+  const configModal = $('configModal');
+  if (configModal) {
+    configModal.addEventListener('click', (e) => {
+      if (e.target === configModal) closeConfigModal();
+    });
+  }
+
+  const flyerModal = $('flyerModal');
+  if (flyerModal) {
+    flyerModal.addEventListener('click', (e) => {
+      if (e.target === flyerModal) closeFlyerModal();
+    });
+  }
+
+  // Escape key closes open modals/sheets
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      if (lookupSheet && lookupSheet.classList.contains('active')) lookupSheet.classList.remove('active');
+      if (lookupModalOverlay && lookupModalOverlay.classList.contains('active')) closeContactModal();
+      if (campaignModal && campaignModal.classList.contains('active')) closeCampaignModal();
+      if (configModal && configModal.classList.contains('active')) closeConfigModal();
+      if (flyerModal && flyerModal.classList.contains('active')) closeFlyerModal();
+    }
+  });
+
   // Response Buttons (Outcome Selection)
   document.querySelectorAll('.response-btn[data-response]').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -1612,6 +1732,20 @@ function setupEvents() {
       if (idx >= 0) APP.contacts[idx] = contact;
 
       saveLocalCalls();
+      updateStatsLocally();
+      renderProgress();
+      if (APP.currentContact && APP.currentContact.id === contact.id) {
+        APP.currentContact = contact;
+        renderContactCard();
+      }
+      const dv = $('dashboardView');
+      if (dv && dv.classList.contains('active')) {
+        renderDashboard();
+      }
+      const lookupInput = $('lookupInput');
+      if (lookupInput && lookupInput.value.trim().length >= 2) {
+        lookupInput.dispatchEvent(new Event('input'));
+      }
       closeContactModal();
 
       if (APP.apiUrl) {
@@ -1697,6 +1831,7 @@ function setupEvents() {
 // ===== DEMO MODE =====
 function enableDemoMode() {
   APP.currentCaller = 'Sister Mary (Demo)';
+  document.documentElement.classList.add('has-session');
   claimNextContactLocally();
   showView('mainView');
   renderCallerBar();

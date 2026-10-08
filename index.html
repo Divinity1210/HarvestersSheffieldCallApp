@@ -9,6 +9,13 @@
   <meta name="format-detection" content="telephone=no">
   <title>Harvesters Croydon – Member Outreach & Calling App</title>
   <meta name="description" content="Harvesters International Christian Centre Croydon mobile volunteer calling app with dynamic campaigns and member feedback capture.">
+  <script>
+  try {
+    if (localStorage.getItem('harvesters_croydon_caller')) {
+      document.documentElement.classList.add('has-session');
+    }
+  } catch(e) {}
+</script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -224,12 +231,9 @@
     .view-screen { display: none; }
     .view-screen.active {
       display: block;
-      animation: viewSlideIn 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    @keyframes viewSlideIn {
-      from { opacity: 0; transform: translateY(6px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+    /* Smooth, non-flickering transition */
+    html.has-session #loginView { display: none !important; }
 
     /* ===== LOGIN SCREEN ===== */
     .login-container {
@@ -595,6 +599,26 @@
       transition: var(--transition);
     }
     .m-whatsapp-btn:active { transform: scale(0.96); }
+    .m-sms-btn {
+      min-height: 44px;
+      background: rgba(59, 130, 246, 0.15);
+      border: 1px solid rgba(59, 130, 246, 0.38);
+      color: #60a5fa;
+      border-radius: var(--radius-sm);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      transition: var(--transition);
+    }
+    .m-sms-btn:active {
+      transform: scale(0.96);
+      background: rgba(59, 130, 246, 0.28);
+    }
+
     .m-copy-btn {
       min-height: 44px;
       background: rgba(255, 255, 255, 0.06);
@@ -1750,16 +1774,16 @@
           <div class="m-quick-tags-wrap">
             <div class="m-quick-tags-label">Feedback Categories (Tap to Tag):</div>
             <div class="m-quick-tags-scroll">
-              <span class="m-tag-chip" onclick="toggleQuickTag('🙏 Prayer Request')">🙏 Prayer Request</span>
-              <span class="m-tag-chip" onclick="toggleQuickTag('🚗 Needs Ride / Transport')">🚗 Needs Transport</span>
-              <span class="m-tag-chip" onclick="toggleQuickTag('👥 Bringing Family')">👥 Bringing Guests</span>
-              <span class="m-tag-chip" onclick="toggleQuickTag('🏥 Health / Healing')">🏥 Health / Healing</span>
-              <span class="m-tag-chip" onclick="toggleQuickTag('💼 Work / Shift Conflict')">💼 Work Conflict</span>
-              <span class="m-tag-chip" onclick="toggleQuickTag('🏠 Relocated / Moved')">🏠 Relocated</span>
-              <span class="m-tag-chip" onclick="toggleQuickTag('🤝 Welfare Support')">🤝 Welfare Support</span>
-              <span class="m-tag-chip" onclick="toggleQuickTag('🙌 Wants to Volunteer')">🙌 Join Workforce</span>
-              <span class="m-tag-chip" onclick="toggleQuickTag('⏰ Call Back Later')">⏰ Call Back</span>
-              <span class="m-tag-chip" onclick="toggleQuickTag('👶 Child Care')">👶 Child Care</span>
+              <span class="m-tag-chip" data-tag="🙏 Prayer Request">🙏 Prayer Request</span>
+              <span class="m-tag-chip" data-tag="🚗 Needs Transport">🚗 Needs Transport</span>
+              <span class="m-tag-chip" data-tag="👥 Bringing Guests">👥 Bringing Guests</span>
+              <span class="m-tag-chip" data-tag="🏥 Health / Healing">🏥 Health / Healing</span>
+              <span class="m-tag-chip" data-tag="💼 Work Conflict">💼 Work Conflict</span>
+              <span class="m-tag-chip" data-tag="🏠 Relocated">🏠 Relocated</span>
+              <span class="m-tag-chip" data-tag="🤝 Welfare Support">🤝 Welfare Support</span>
+              <span class="m-tag-chip" data-tag="🙌 Join Workforce">🙌 Join Workforce</span>
+              <span class="m-tag-chip" data-tag="⏰ Call Back">⏰ Call Back</span>
+              <span class="m-tag-chip" data-tag="👶 Child Care">👶 Child Care</span>
             </div>
           </div>
 
@@ -2091,6 +2115,6 @@
   </div>
 </div>
 
-<script src="app.js"></script>
+<script src="app.js?v=2.3"></script>
 </body>
 </html>
