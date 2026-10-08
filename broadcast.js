@@ -1,25 +1,25 @@
 // =====================================================
-// HARVESTERS BIRMINGHAM – Awakening WhatsApp Broadcast
+// HARVESTERS CROYDON – WhatsApp Broadcast
 // Private Admin Console Logic
 // =====================================================
 
-const API_URL = 'https://script.google.com/macros/s/AKfycbxQhZHOa5OfG7WM4460paNpZ1j96F4yGuNB97RFwPKcjMvhgMps28WcEet5UOuCQ80szA/exec';
+const API_URL = localStorage.getItem('harvesters_croydon_api_url') || 'https://script.google.com/macros/s/AKfycbxQhZHOa5OfG7WM4460paNpZ1j96F4yGuNB97RFwPKcjMvhgMps28WcEet5UOuCQ80szA/exec';
 const ADMIN_PIN = '1210';
-const STORAGE_PIN_KEY = 'hb_awakening_admin_auth';
-const STORAGE_SENT_KEY = 'hb_awakening_wa_sent_ids';
-const STORAGE_TEMPLATE_KEY = 'hb_awakening_wa_template';
+const STORAGE_PIN_KEY = 'hc_croydon_admin_auth';
+const STORAGE_SENT_KEY = 'hc_croydon_wa_sent_ids';
+const STORAGE_TEMPLATE_KEY = 'hc_croydon_wa_template';
 
 const DEFAULT_TEMPLATE = 
-`Hi {{FirstName}}, this is Harvesters Birmingham! 🌟
+`Hi {{FirstName}}, this is Harvesters Croydon! 🌟
 
-We specially invite you to Awakening — our 2-day power gathering for Breakthrough and Spiritual Renewal!
+We specially invite you and your family to our Sunday Celebration Service this coming Sunday!
 
-📍 Venue: Park Regis, 160 Broad St, Birmingham B15 1DT
-🗓️ Dates: Saturday 26th & Sunday 27th September
-🕙 Time: 09:00am - 03:00pm
-🚗 Parking: Free parking available on-site and on-street
+📍 Venue: The Legacy Centre, 14 Imperial Way, Croydon CR0 4RR
+🗓️ Date: This Sunday
+🕙 Time: 10:00 AM
+🚗 Parking: Free parking available on-site
 
-We would really love to have you with us! Will you be able to make it?`;
+We would really love to have you with us! Will you be able to make it? 🙏`;
 
 // App State
 let STATE = {
@@ -462,10 +462,10 @@ function downloadVCard() {
       return [
         'BEGIN:VCARD',
         'VERSION:3.0',
-        `FN:Awakening - ${name}`,
+        `FN:Croydon - ${name}`,
         `N:${surname};${firstName};;;`,
         `TEL;TYPE=CELL:+${e164}`,
-        'NOTE:Harvesters Birmingham Awakening 2026',
+        'NOTE:Harvesters Croydon Member Outreach',
         'END:VCARD'
       ].join('\r\n');
     }).join('\r\n');
@@ -474,7 +474,7 @@ function downloadVCard() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `Harvesters_Awakening_WhatsApp_Contacts_${new Date().toISOString().slice(0, 10)}.vcf`;
+    a.download = `Harvesters_Croydon_WhatsApp_Contacts_${new Date().toISOString().slice(0, 10)}.vcf`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -562,21 +562,23 @@ function setupPinAuth() {
 
 // ===== LOAD CONTACTS =====
 async function loadContacts() {
-  showLoading('Loading contacts for WhatsApp broadcast...');
+  showLoading('Loading Croydon members for WhatsApp broadcast...');
   try {
     let contacts = [];
-    if (!API_URL) {
-      // Demo contacts fallback
-      contacts = [
-        { id: 1817, row: 1817, name: 'Zainab Zubairu', firstName: 'Zainab', phone: '447512984120', status: null },
-        { id: 1816, row: 1816, name: 'Victor Williams', firstName: 'Victor', phone: '447814529331', status: null },
-        { id: 1815, row: 1815, name: 'Tolulope Vincent', firstName: 'Tolulope', phone: '447910248192', status: null },
-        { id: 1814, row: 1814, name: 'Simisola Udoh', firstName: 'Simisola', phone: '447401928374', status: 'will-attend' },
-        { id: 1813, row: 1813, name: 'Samuel Thompson', firstName: 'Samuel', phone: '447384910293', status: 'unsure' }
-      ];
-    } else {
+    try {
       const data = await api({ action: 'contacts' });
-      contacts = data.contacts || [];
+      if (data && data.contacts && data.contacts.length > 0) {
+        contacts = data.contacts;
+      }
+    } catch (apiErr) {
+      console.warn('API fetch failed, loading Croydon seed members:', apiErr);
+    }
+
+    if (contacts.length === 0) {
+      const resp = await fetch('./croydon_contacts_seed.json');
+      if (resp.ok) {
+        contacts = await resp.json();
+      }
     }
 
     STATE.rawContacts = contacts;
