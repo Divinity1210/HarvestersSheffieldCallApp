@@ -3,7 +3,13 @@
 // Private Admin Console Logic
 // =====================================================
 
-const API_URL = localStorage.getItem('harvesters_croydon_api_url') || 'https://script.google.com/macros/s/AKfycbxQhZHOa5OfG7WM4460paNpZ1j96F4yGuNB97RFwPKcjMvhgMps28WcEet5UOuCQ80szA/exec';
+const DEFAULT_API_URL = 'https://script.google.com/macros/s/AKfycbyE3pdMRs4s3mDVTbECZURQyS_Q0rT2WP8_SRVYlqocOcj-24lG4BEnFdAxlY8zHQPncA/exec';
+let storedApiUrl = localStorage.getItem('harvesters_croydon_api_url');
+if (!storedApiUrl || storedApiUrl.includes('AKfycbxQhZHOa5OfG7WM4460paNpZ1j96F4yGuNB97RFwPKcjMvhgMps28WcEet5UOuCQ80szA')) {
+  storedApiUrl = DEFAULT_API_URL;
+  localStorage.setItem('harvesters_croydon_api_url', DEFAULT_API_URL);
+}
+const API_URL = storedApiUrl;
 const ADMIN_PIN = '1210';
 const STORAGE_PIN_KEY = 'hc_croydon_admin_auth';
 const STORAGE_SENT_KEY = 'hc_croydon_wa_sent_ids';

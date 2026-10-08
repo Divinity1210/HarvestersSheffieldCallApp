@@ -4,13 +4,22 @@
 // =================================================================
 
 // ===== CONFIGURATION =====
-// Default or stored API URL
-const DEFAULT_API_URL = 'https://script.google.com/macros/s/AKfycbxQhZHOa5OfG7WM4460paNpZ1j96F4yGuNB97RFwPKcjMvhgMps28WcEet5UOuCQ80szA/exec';
+// Default Croydon Google Apps Script Web App URL
+const DEFAULT_API_URL = 'https://script.google.com/macros/s/AKfycbyE3pdMRs4s3mDVTbECZURQyS_Q0rT2WP8_SRVYlqocOcj-24lG4BEnFdAxlY8zHQPncA/exec';
+const OLD_BIRMINGHAM_URL = 'https://script.google.com/macros/s/AKfycbxQhZHOa5OfG7WM4460paNpZ1j96F4yGuNB97RFwPKcjMvhgMps28WcEet5UOuCQ80szA/exec';
+
 const STORAGE_KEY_API_URL = 'harvesters_croydon_api_url';
 const STORAGE_KEY_CALLER = 'harvesters_croydon_caller';
 const STORAGE_KEY_CAMPAIGNS = 'harvesters_croydon_campaigns';
 const STORAGE_KEY_ACTIVE_CAMPAIGN = 'harvesters_croydon_active_campaign';
 const STORAGE_KEY_LOCAL_CALLS = 'harvesters_croydon_local_calls';
+
+// Auto-migrate: If browser still holds the legacy Birmingham URL, point to Croydon
+let initialApiUrl = localStorage.getItem(STORAGE_KEY_API_URL);
+if (!initialApiUrl || initialApiUrl.includes('AKfycbxQhZHOa5OfG7WM4460paNpZ1j96F4yGuNB97RFwPKcjMvhgMps28WcEet5UOuCQ80szA')) {
+  initialApiUrl = DEFAULT_API_URL;
+  localStorage.setItem(STORAGE_KEY_API_URL, DEFAULT_API_URL);
+}
 
 // ===== DEFAULT CAMPAIGNS =====
 const DEFAULT_CAMPAIGNS = [
@@ -94,8 +103,9 @@ let APP = {
 
   // API Mode
   isLiveApi: false,
-  apiUrl: localStorage.getItem(STORAGE_KEY_API_URL) || DEFAULT_API_URL
+  apiUrl: initialApiUrl
 };
+window.APP = APP;
 
 // ===== UI HELPERS =====
 function $(id) { return document.getElementById(id); }
@@ -142,17 +152,20 @@ async function api(params) {
   });
 
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 12000);
+  const timeoutId = setTimeout(() => controller.abort(), 25000);
 
   try {
+    console.log('[Croydon API Request]', params.action, params);
     const resp = await fetch(url.toString(), { signal: controller.signal });
     clearTimeout(timeoutId);
     if (!resp.ok) throw new Error('HTTP ' + resp.status);
     const data = await resp.json();
+    console.log('[Croydon API Response]', data);
     if (data.error) throw new Error(data.error);
     return data;
   } catch (err) {
     clearTimeout(timeoutId);
+    console.error('[Croydon API Error]', params.action, err);
     throw err;
   }
 }
@@ -800,7 +813,8 @@ async function submitCall(isSkip) {
   saveLocalCalls();
 
   // Try API submit
-  if (APP.isLiveApi) {
+  let syncedToSheet = false;
+  if (APP.apiUrl) {
     try {
       const result = await api({
         action: 'submit_next',
@@ -811,6 +825,9 @@ async function submitCall(isSkip) {
         campaign: campaignName,
         timestamp: timestamp
       });
+
+      syncedToSheet = true;
+      APP.isLiveApi = true;
 
       if (result.next) {
         APP.currentContact = result.next;
@@ -825,20 +842,23 @@ async function submitCall(isSkip) {
         updateStatsLocally();
       }
 
-      showToast(`✓ Response recorded for ${contact.name}!`);
+      showToast(`✓ Response saved to Google Sheet for ${contact.name}!`, 3500);
       renderContactCard();
       renderProgress();
       hideLoading();
       return;
     } catch (err) {
-      console.warn('API submit failed, fallback to local:', err);
+      console.error('API submit failed, fallback to local:', err);
+      showToast(`⚠️ Google Sheet sync error: ${err.message}. Response saved locally!`, 5000);
     }
   }
 
-  // Local fallback
+  // Local fallback (if offline or API error)
   claimNextContactLocally(false);
   updateStatsLocally();
-  showToast(`✓ Response recorded for ${contact.name}!`);
+  if (!syncedToSheet && !APP.apiUrl) {
+    showToast(`✓ Response recorded locally for ${contact.name}`);
+  }
   renderContactCard();
   renderProgress();
   hideLoading();
@@ -1593,17 +1613,28 @@ function setupEvents() {
 
       saveLocalCalls();
       closeContactModal();
-      showToast(`✓ Updated ${contact.name}`);
 
-      if (APP.isLiveApi) {
+      if (APP.apiUrl) {
+        showLoading(`Saving ${contact.name} to Google Sheet...`);
         api({
           action: 'submit',
           row: contact.row || contact.id,
           status: contact.status,
           caller: contact.calledBy,
           notes: contact.notes,
-          campaign: contact.campaign
-        }).catch(console.error);
+          campaign: contact.campaign,
+          timestamp: contact.calledAt
+        }).then(() => {
+          APP.isLiveApi = true;
+          showToast(`✓ Synced update for ${contact.name} to Google Sheet!`, 3500);
+        }).catch(err => {
+          console.error('Modal API submit failed:', err);
+          showToast(`⚠️ Updated locally. Sheet sync failed: ${err.message}`, 5000);
+        }).finally(() => {
+          hideLoading();
+        });
+      } else {
+        showToast(`✓ Updated ${contact.name} locally`);
       }
     });
   }

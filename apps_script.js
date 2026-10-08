@@ -282,12 +282,14 @@ function handleSubmit(p) {
     const row   = parseInt(p.row, 10);
     if (!row || row < 2) return jsonResp({ error: 'Invalid row: ' + p.row });
 
-    const notes = p.notes || '';
-    const campaign = p.campaign || '';
+    const status    = p.status || '';
+    const caller    = p.caller || '';
+    const notes     = p.notes || '';
+    const campaign  = p.campaign || '';
     const timestamp = p.timestamp || new Date().toISOString();
 
-    sheet.getRange(row, COL_STATUS).setValue(p.status);
-    sheet.getRange(row, COL_CALLER).setValue(p.caller);
+    sheet.getRange(row, COL_STATUS).setValue(status);
+    sheet.getRange(row, COL_CALLER).setValue(caller);
     sheet.getRange(row, COL_NOTES).setValue(notes);
     if (campaign) sheet.getRange(row, COL_CAMPAIGN).setValue(campaign);
     sheet.getRange(row, COL_TIME).setValue(timestamp);
@@ -315,13 +317,15 @@ function handleSubmitAndNext(p) {
     if (!row || row < 2) return jsonResp({ error: 'Invalid row' });
 
     // 1. Write the response atomically
-    const notes = p.notes || '';
-    const campaign = p.campaign || '';
+    const status    = p.status || '';
+    const caller    = p.caller || '';
+    const notes     = p.notes || '';
+    const campaign  = p.campaign || '';
     const timestamp = p.timestamp || new Date().toISOString();
 
     sheet.getRange(row, COL_STATUS, 1, 5).setValues([[
-      p.status,
-      p.caller,
+      status,
+      caller,
       notes,
       campaign,
       timestamp
